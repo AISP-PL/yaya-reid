@@ -40,26 +40,6 @@
         <item>
          <layout class="QHBoxLayout" name="horizontalLayout">
           <item>
-           <widget class="QCheckBox" name="isSavedCheckBox">
-            <property name="text">
-             <string>Saved</string>
-            </property>
-            <property name="checkable">
-             <bool>false</bool>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QCheckBox" name="isErrorsCheckBox">
-            <property name="text">
-             <string>isErrors?</string>
-            </property>
-            <property name="checkable">
-             <bool>false</bool>
-            </property>
-           </widget>
-          </item>
-          <item>
            <widget class="QLabel" name="label_4">
             <property name="text">
              <string>Image scaling:</string>
@@ -85,39 +65,24 @@
             </item>
            </widget>
           </item>
-          <item>
-           <widget class="QProgressBar" name="progressBar">
-            <property name="value">
-             <number>0</number>
-            </property>
-            <property name="textVisible">
-             <bool>true</bool>
-            </property>
-            <property name="textDirection">
-             <enum>QProgressBar::TopToBottom</enum>
-            </property>
-            <property name="format">
-             <string>Annotated %p%</string>
-            </property>
-           </widget>
-          </item>
          </layout>
         </item>
         <item>
-         <widget class="ViewerEditorImage" name="viewerEditor" native="true">
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
-          <property name="minimumSize">
-           <size>
-            <width>100</width>
-            <height>100</height>
-           </size>
-          </property>
-         </widget>
+         <widget class="QListWidget" name="gallery"/>
+        </item>
+        <item>
+         <layout class="QHBoxLayout" name="horizontalLayout_9">
+          <item>
+           <widget class="QLabel" name="imagePreview">
+            <property name="text">
+             <string>TextLabel</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QTableView" name="imageCorelations"/>
+          </item>
+         </layout>
         </item>
        </layout>
       </widget>
@@ -234,17 +199,6 @@
             </property>
             <property name="shortcut">
              <string>X</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QPushButton" name="DeleteNotAnnotatedFilesButton">
-            <property name="text">
-             <string>Delete not annotated</string>
-            </property>
-            <property name="icon">
-             <iconset resource="icons/tango.qrc">
-              <normaloff>:/icons/32x32/process-stop.png</normaloff>:/icons/32x32/process-stop.png</iconset>
             </property>
            </widget>
           </item>
@@ -963,97 +917,6 @@
             </item>
            </layout>
           </widget>
-          <widget class="QWidget" name="pageDetector">
-           <layout class="QVBoxLayout" name="verticalLayout_4">
-            <item>
-             <widget class="QLabel" name="detectorConfidenceLabel">
-              <property name="text">
-               <string>Confidence</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QSlider" name="detectorConfidenceSlider">
-              <property name="maximum">
-               <number>100</number>
-              </property>
-              <property name="orientation">
-               <enum>Qt::Horizontal</enum>
-              </property>
-              <property name="invertedAppearance">
-               <bool>false</bool>
-              </property>
-              <property name="tickPosition">
-               <enum>QSlider::TicksBothSides</enum>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <layout class="QHBoxLayout" name="horizontalLayout_8">
-              <item>
-               <widget class="QLabel" name="detectorNmsLabel">
-                <property name="text">
-                 <string>NMS threshold</string>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QComboBox" name="detectorNmsCombo">
-                <item>
-                 <property name="text">
-                  <string>NMS</string>
-                 </property>
-                </item>
-                <item>
-                 <property name="text">
-                  <string>SoftNMS</string>
-                 </property>
-                </item>
-               </widget>
-              </item>
-              <item>
-               <spacer name="horizontalSpacer_5">
-                <property name="orientation">
-                 <enum>Qt::Horizontal</enum>
-                </property>
-                <property name="sizeHint" stdset="0">
-                 <size>
-                  <width>40</width>
-                  <height>20</height>
-                 </size>
-                </property>
-               </spacer>
-              </item>
-             </layout>
-            </item>
-            <item>
-             <widget class="QSlider" name="detectorNmsSlider">
-              <property name="maximum">
-               <number>100</number>
-              </property>
-              <property name="orientation">
-               <enum>Qt::Horizontal</enum>
-              </property>
-              <property name="tickPosition">
-               <enum>QSlider::TicksBothSides</enum>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <spacer name="verticalSpacer_3">
-              <property name="orientation">
-               <enum>Qt::Vertical</enum>
-              </property>
-              <property name="sizeHint" stdset="0">
-               <size>
-                <width>20</width>
-                <height>40</height>
-               </size>
-              </property>
-             </spacer>
-            </item>
-           </layout>
-          </widget>
           <widget class="QWidget" name="pageCircle">
            <layout class="QVBoxLayout" name="verticalLayout">
             <item>
@@ -1103,9 +966,6 @@
              </spacer>
             </item>
            </layout>
-          </widget>
-          <widget class="QWidget" name="pageKeycodes">
-           <layout class="QVBoxLayout" name="verticalLayout_3"/>
           </widget>
          </widget>
         </item>
@@ -1242,14 +1102,6 @@
    </property>
   </action>
  </widget>
- <customwidgets>
-  <customwidget>
-   <class>ViewerEditorImage</class>
-   <extends>QWidget</extends>
-   <header>.ViewerEditorImage</header>
-   <container>1</container>
-  </customwidget>
- </customwidgets>
  <resources>
   <include location="icons/tango.qrc"/>
  </resources>

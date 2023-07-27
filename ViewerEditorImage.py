@@ -20,7 +20,6 @@ from PyQt5.QtCore import Qt, pyqtSignal, QRect, QPointF
 import helpers.boxes as boxes
 import logging
 from helpers.images import GetFixedFitToBox
-from engine.annote import AnnoteAuthorType
 
 
 class ViewerEditorImage(QWidget):
@@ -31,7 +30,7 @@ class ViewerEditorImage(QWidget):
     ModeRenameAnnotation = 2
     ModeRemoveAnnotation = 3
     ModePaintCircle = 4
-    
+
     # Miniature position
     MiniatureLeft = 0
     MiniatureRight = 1
@@ -40,11 +39,10 @@ class ViewerEditorImage(QWidget):
     ImageScalingResize = 0
     ImageScalingResizeAspectRatio = 1
     ImageScalingOriginalSize = 2
-    
+
     # Image scaling algorithm
     ImageScalingLinear = 0
     ImageScalingNearest = 1
-    
 
     # Define signals
     signalEditorFinished = pyqtSignal(int, name='EditorFinished')

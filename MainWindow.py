@@ -8,12 +8,13 @@ import sys
 import os
 import logging
 from ObjectDetectors.common.Detector import NmsMethod
+from ReID.FeaturesClassifier import FeaturesClassifier
 from Ui_MainWindow import Ui_MainWindow
 from PyQt5.QtWidgets import QApplication, QMainWindow, QFileDialog, QTableWidgetItem,\
     QListWidgetItem, QButtonGroup, QMessageBox
 from PyQt5 import QtCore, QtGui
-from engine.annote import GetClasses
 from ViewerEditorImage import ViewerEditorImage
+from engine.AnnoterReid import AnnoterReid
 from helpers.files import ChangeExtension, FixPath
 from copy import copy
 from PyQt5.QtCore import Qt
@@ -30,8 +31,8 @@ class MainWindowGui(Ui_MainWindow):
 
     def __init__(self,
                  args,
-                 detector,
-                 annoter,
+                 reid_classifier: FeaturesClassifier,
+                 annoter: AnnoterReid,
                  ):
         '''
         Constructor
@@ -40,14 +41,10 @@ class MainWindowGui(Ui_MainWindow):
         self.info = {'Callbacks': True}
         # Store initial arguments
         self.args = args
-        # Store detector handle
-        self.detector = detector
         # Store annoter handle
         self.annoter = annoter
-        # Keys offset
-        self.keysOffset = 0
-        # Keys length
-        self.keysSize = 12
+        # Identity index
+        self.identityIndex = 0
 
         # UI - creation
         self.App = QApplication(sys.argv)
@@ -75,50 +72,23 @@ class MainWindowGui(Ui_MainWindow):
 
     def SetupDefault(self):
         ''' Sets default for UI.'''
-        # Annoter - process first time.
-        self.annoter.Process()
-
         # Image scaling
         self.ui.imageScalingComboBox.currentTextChanged.connect(
             self.CallbackImageScalingTextChanged)
-
-        # List of detector labels - Create
-        for className in GetClasses():
-            self.ui.labelsListWidget.addItem(
-                QListWidgetItem(className, self.ui.labelsListWidget))
-        self.ui.labelsListWidget.setCurrentRow(0)
-        self.ui.labelsListWidget.currentRowChanged.connect(
-            self.CallbackLabelsRowChanged)
-
-        # Detector : Confidence and NMS sliders defaults (0.5 and 0.45)
-        self.ui.detectorConfidenceSlider.setValue(self.annoter.confidence*100)
-        self.ui.detectorNmsSlider.setValue(self.annoter.nms*100)
-        self.ui.detectorNmsCombo.clear()
-        for method in NmsMethod:
-            self.ui.detectorNmsCombo.addItem(method.name)
-        self.CallbackDetectorUpdate()
-
-        # Detector : Callbacks for sliders, method
-        self.ui.detectorConfidenceSlider.valueChanged.connect(
-            self.CallbackDetectorUpdate)
-        self.ui.detectorNmsSlider.valueChanged.connect(
-            self.CallbackDetectorUpdate)
-        self.ui.detectorNmsCombo.currentTextChanged.connect(
-            self.CallbackDetectorUpdate)
 
         # Paint size slider
         self.ui.paintSizeSlider.valueChanged.connect(
             self.CallbackPaintSizeSlider)
 
         # Images table : Setup
-        ViewImagesTable.View(
-            self.ui.fileSelectorTableWidget, self.annoter.GetFiles())
+        ViewImagesTable.View(self.ui.fileSelectorTableWidget,
+                             self.annoter.identities)
         self.ui.fileSelectorTableWidget.itemClicked.connect(
             self.CallbackFileSelectorItemClicked)
 
-        # Images summary : Setup
-        ViewImagesSummary.View(self.ui.fileSummaryLabel,
-                               self.annoter.GetFiles())
+        # # Images summary : Setup
+        # ViewImagesSummary.View(self.ui.fileSummaryLabel,
+        #                        self.annoter.identities)
 
         # Menu handling
         self.ui.actionZamknijProgram.triggered.connect(self.CallbackClose)
@@ -126,8 +96,6 @@ class MainWindowGui(Ui_MainWindow):
             self.CallbackSaveFileAnnotationsButton)
         self.ui.actionOtworzLokacje.triggered.connect(
             self.CallbackOpenLocation)
-        self.ui.actionSave_screenshoot.triggered.connect(
-            self.CallbackScreenshot)
         self.ui.actionSave_copy.triggered.connect(
             self.CallbackSaveCopy)
 
@@ -146,8 +114,6 @@ class MainWindowGui(Ui_MainWindow):
             self.CallbackSaveFileAnnotationsButton)
         self.ui.DeleteImageAnnotationsButton.clicked.connect(
             self.CallbackDeleteImageAnnotationsButton)
-        self.ui.DeleteNotAnnotatedFilesButton.clicked.connect(
-            self.CallbackDeleteNotAnnotatedFilesButton)
         # Buttons - Annotations
         self.ui.addAnnotationsButton.clicked.connect(
             self.CallbackAddAnnotationsButton)
@@ -191,11 +157,10 @@ class MainWindowGui(Ui_MainWindow):
             lambda: self.CallbackKeycodeButtonClicked(self.ui.button11))
         self.ui.button12.clicked.connect(
             lambda: self.CallbackKeycodeButtonClicked(self.ui.button12))
-        self.ui.buttonOffset.clicked.connect(
-            self.CallbackKeycodeOffsetButtonClicked)
 
     def Setup(self):
         ''' Setup again UI.'''
+        return
         filename = self.annoter.GetFilename()
         imageWidth, imageHeight, imageBytes = self.annoter.GetImageSize()
         imageNumber = self.annoter.GetFileIndex()
@@ -280,22 +245,6 @@ class MainWindowGui(Ui_MainWindow):
         else:
             logging.error('(MainWindow) Unknown value!')
 
-    def CallbackKeycodeOffsetButtonClicked(self):
-        ''' Callback when keycode offset button clicked.'''
-        self.keysOffset += self.keysSize
-        if (self.keysOffset >= self.ui.labelsListWidget.count()):
-            self.keysOffset = 0
-        # Call like button 1 clicked
-        self.CallbackKeycodeButtonClicked(self.ui.button1)
-
-    def CallbackKeycodeButtonClicked(self, button):
-        ''' Callback when keycode button clicked.'''
-        indexChr = self.keysOffset + int(button.text())-1
-        if (indexChr >= self.ui.labelsListWidget.count()):
-            indexChr = self.ui.labelsListWidget.count()-1
-
-        self.ui.labelsListWidget.setCurrentRow(indexChr)
-
     def CallbackLabelsRowChanged(self, index):
         ''' Current labels row changed. '''
         self.ui.viewerEditor.SetClassNumber(index)
@@ -304,8 +253,6 @@ class MainWindowGui(Ui_MainWindow):
         ''' When file selector item was clicked.'''
         # Read current file number
         fileID = int(item.toolTip())
-        # Update annoter
-        self.annoter.SetImageID(fileID)
         # Setup UI again
         self.Setup()
 
@@ -325,11 +272,6 @@ class MainWindowGui(Ui_MainWindow):
         ''' Detect annotations.'''
         self.ui.toolSettingsStackedWidget.setCurrentWidget(
             self.ui.pageDetector)
-        self.annoter.confidence = self.ui.detectorConfidenceSlider.value() / 100
-        self.annoter.nms = self.ui.detectorNmsSlider.value() / 100
-        self.annoter.nmsMethod = NmsMethod(
-            self.ui.detectorNmsCombo.currentText())
-        self.annoter.Process(forceDetector=True)
         self.Setup()
 
     def CallbackDetectorUpdate(self):
@@ -372,44 +314,31 @@ class MainWindowGui(Ui_MainWindow):
 
     def CallbackSaveFileAnnotationsButton(self):
         '''Callback'''
-        self.annoter.Save()
         self.Setup()
 
     def CallbackClearAnnotationsButton(self):
         '''Callback'''
-        self.annoter.ClearAnnotations()
         self.Setup()
 
     def CallbackDeleteImageAnnotationsButton(self):
         '''Callback'''
-        # Remove QtableWidget row
-        rowIndex = self.ImageIDToRowNumber(self.annoter.GetFileID())
-        if (rowIndex is not None):
-            self.ui.fileSelectorTableWidget.removeRow(rowIndex)
-            # Remove annoter data
-            self.annoter.Delete()
-            self.annoter.Process()
-            self.Setup()
-
-    def CallbackDeleteNotAnnotatedFilesButton(self):
-        ''' Callback.'''
-        button_reply = QMessageBox.question(self.window,
-                                            'Delete all not annotated images',
-                                            'Are you sure (delete not annotated) ?')
-        if button_reply == QMessageBox.Yes:
-            filesList = copy(self.annoter.GetFiles())
-            for fileEntry in filesList:
-                if (fileEntry['IsAnnotation'] is False):
-                    self.annoter.Delete(fileEntry)
+        # # Remove QtableWidget row
+        # rowIndex = self.ImageIDToRowNumber(self.annoter.GetFileID())
+        # if (rowIndex is not None):
+        #     self.ui.fileSelectorTableWidget.removeRow(rowIndex)
+        #     # Remove annoter data
+        #     self.annoter.Delete()
+        #     self.annoter.Process()
+        #     self.Setup()
 
     def CallbackNextFile(self):
         '''Callback'''
-        self.annoter.ProcessNext()
+        self.identityIndex += 1
         self.Setup()
 
     def CallbackPrevFile(self):
         '''Callback'''
-        self.annoter.ProcessPrev()
+        self.identityIndex -= 1
         self.Setup()
 
     def CallbackOpenLocation(self):
@@ -425,30 +354,9 @@ class MainWindowGui(Ui_MainWindow):
         logging.debug('Closing application!')
         self.window.close()
 
-    def CallbackScreenshot(self):
-        ''' Save configuration.'''
-        file = self.annoter.GetFile()
-
-        if (file is not None):
-            # Set default screenshots location
-            ''' TODO fix windows and linux hanling of this code. '''
-            if (os.name == 'posix'):
-                screenshotsPath = '/home/%s/Obrazy/' % (
-                    os.environ.get('USER', 'Error'))
-            else:
-                screenshotsPath = 'C:\\'
-            # Set screenshot filename
-            screenshotFilename = file['Name'] + \
-                datetime.now().strftime('%Y%d%m-%H%M%S.png')
-            # Call ui save
-            result = self.ui.viewerEditor.ScreenshotToFile(
-                screenshotsPath+screenshotFilename)
-
-            if (result is None):
-                logging.error('Screenshot error!')
-
     def CallbackSaveCopy(self):
         ''' Save configuration.'''
+        return
         file = self.annoter.GetFile()
 
         if (file is not None):

@@ -1,14 +1,11 @@
 #!/usr/bin/python3
-import cv2
-import numpy as np
 import logging
 import argparse
 import sys
 from ReID.ReidClassifier import GetReidClassifier, ModelCreate, ModelsList, ModelsPrint
 from engine.AnnoterReid import AnnoterReid
 from helpers.files import *
-from ObjectDetectors import IsCuda, IsDarknet, CreateDetector, GetDetectorLabels
-# from MainWindow import MainWindowGui
+from MainWindow import MainWindowGui
 
 
 def main():
@@ -42,9 +39,11 @@ def main():
                           features_classifier=GetReidClassifier()
                           )
 
-    # # Start QtGui
-    # gui = MainWindowGui(args=args,  annoter=annoter)
-    # sys.exit(gui.Run())
+    # Start QtGui
+    gui = MainWindowGui(args=args,
+                        reid_classifier=GetReidClassifier(),
+                        annoter=annoter)
+    sys.exit(gui.Run())
 
 
 if __name__ == '__main__':

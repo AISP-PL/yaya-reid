@@ -81,6 +81,69 @@ class Identity:
     # Identity ImageData list
     images: list = field(init=True, default=None)
 
+    @property
+    def images_count(self) -> int:
+        ''' Count of images.'''
+        return len(self.images)
+
+    @property
+    def hue(self) -> float:
+        ''' Return average hue of all images.'''
+        # Check : Images list is not empty
+        if (len(self.images) == 0):
+            return None
+
+        # Get hue
+        hue = [image.visuals.hue for image in self.images]
+        return np.mean(hue)
+
+    @property
+    def brightness(self) -> float:
+        ''' Return average brightness of all images.'''
+        # Check : Images list is not empty
+        if (len(self.images) == 0):
+            return None
+
+        # Get brightness
+        brightness = [image.visuals.brightness for image in self.images]
+        return np.mean(brightness)
+
+    @property
+    def saturation(self) -> float:
+        ''' Return average saturation of all images.'''
+        # Check : Images list is not empty
+        if (len(self.images) == 0):
+            return None
+
+        # Get saturation
+        saturation = [image.visuals.saturation for image in self.images]
+        return np.mean(saturation)
+
+    @property
+    def imhash(self) -> float:
+        ''' Return average imhash of all images.'''
+        # Check : Images list is not empty
+        if (len(self.images) == 0):
+            return None
+
+        # Get imhash
+        imhash = [image.visuals.dhash for image in self.images]
+        return np.mean(imhash)
+
+    @property
+    def features(self) -> np.array:
+        ''' Return average features of all np.arrays.'''
+        # Check : Images list is not empty
+        if (len(self.images) == 0):
+            return None
+
+        # Get features
+        features = [image.features for image in self.images]
+        # Get average
+        average = np.mean(features, axis=0)
+
+        return average
+
 
 @dataclass
 class AnnoterReid:
@@ -102,6 +165,16 @@ class AnnoterReid:
 
         # Location : Open and parse data
         self.OpenLocation(self.dirpath)
+
+    @property
+    def identities_count(self) -> int:
+        ''' Count of identities.'''
+        return len(self.identities)
+
+    @property
+    def images_count(self) -> int:
+        ''' Count of images.'''
+        return sum([len(identity.images) for identity in self.identities])
 
     @staticmethod
     def ImagenameToReidInfo(imagename: str) -> int:

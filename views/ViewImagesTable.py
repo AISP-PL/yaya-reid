@@ -11,10 +11,10 @@ from views.ViewImagesTableRow import ViewImagesTableRow
 class ViewImagesTable:
 
     @staticmethod
-    def View(table: QTableWidget, files: list):
+    def View(table: QTableWidget, identities: list):
         ''' View images in table.'''
         # Check : Invalid files list
-        if (files is None) or (len(files) == 0):
+        if (identities is None) or (len(identities) == 0):
             return
 
         # Get translations
@@ -23,17 +23,17 @@ class ViewImagesTable:
         # Update GUI data
         table.clear()
         labels = _translate('ViewImagesTable',
-                            'Name;ImSize;Hue;Saturation;Brightness;ImHash;' +
-                            'IsAnnotated;Classes;Size;Correct;CorrectBbox;New [j];Precision;Recall;Errors;' +
-                            'Match.Confidence;Det.WorstConfidence').split(';')
+                            'Identity;Images;Hue;Saturation;Brightness;ImHash;' +
+                            'Features').split(';')
         table.setColumnCount(len(labels))
         table.setHorizontalHeaderLabels(labels)
-        table.setRowCount(len(files))
+        table.setRowCount(len(identities))
         table.setColumnCount(len(labels))
 
         # View each row.
-        for rowIndex, fileEntry in enumerate(files):
-            ViewImagesTableRow.View(table, rowIndex, fileEntry)
+        for rowIndex, identity_number in enumerate(identities):
+            identity = identities[identity_number]
+            ViewImagesTableRow.View(table, rowIndex, identity)
 
         # GUI - Enable sorting again
         table.setSortingEnabled(True)
