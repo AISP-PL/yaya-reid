@@ -136,3 +136,4 @@ env*/
 input/*.detector
 input/*.json
 input/*.txt
+ReID/**/*.tar

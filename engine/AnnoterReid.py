@@ -3,14 +3,17 @@ Created on 17 lis 2020
 
 @author: spasz
 '''
+from __future__ import annotations
+from dataclasses import dataclass, field
 from datetime import timedelta
 from math import sqrt
 import os
+import re
 import time
 import cv2
 import logging
-from ObjectDetectors.common.Detector import NmsMethod
-import engine.annote as annote
+
+import numpy as np
 import helpers.prefilters as prefilters
 import helpers.transformations as transformations
 import helpers.boxes as boxes
@@ -19,97 +22,136 @@ from helpers.files import IsImageFile, DeleteFile, GetNotExistingSha1Filepath, F
 from helpers.textAnnotations import ReadAnnotations, SaveAnnotations, IsExistsAnnotations,\
     DeleteAnnotations, SaveDetections, ReadDetections
 from helpers.metrics import Metrics,  EvaluateMetrics
-from engine.annote import AnnoteAuthorType
 from helpers.visuals import Visuals, VisualsDuplicates
 
 
-class Annoter():
-    '''
-    classdocs
-    '''
-    # Sort methods
-    NoSort = 0
-    SortByDatetime = 1
-    SortByInvDatetime = 2
-    SortByAlphabet = 3
+@dataclass
+class ReidFileInfo:
+    ''' Informations stored in name of reid image file.'''
+    # Identity number
+    identity: int = field(init=True, default=None)
+    # Camera number
+    camera: int = field(init=True, default=None)
+    # Frame number
+    frame: int = field(init=True, default=None)
 
-    def __init__(self,
-                 filepath,
-                 detector,
-                 noDetector=False,
-                 sortMethod=SortByInvDatetime,
-                 isOnlyNewFiles=False,
-                 isOnlyOldFiles=False,
-                 isOnlyErrorFiles=False,
-                 isOnlyDetectedClass=None,
-                 isOnlySpecificClass=None,
-                 forceDetector=False,
-                 detectorConfidence: float = 0.5,
-                 detectorNms: float = 0.45,
-                 ):
-        '''
-        Constructor
-        '''
-        # Set configuration
-        self.config = {
-            'sortMethod': sortMethod,
-            'forceDetector': forceDetector,
-            'isOnlyNewFiles': isOnlyNewFiles,
-            'isOnlyOldFiles': isOnlyOldFiles,
-            'isOnlyErrorFiles': isOnlyErrorFiles,
-            'isOnlyDetectedClass': isOnlyDetectedClass,
-            'isOnlySpecificClass': isOnlySpecificClass,
-        }
-        # Detector handle
-        self.detector = detector
-        # Path
-        self.dirpath = filepath
-        # Use of detector
-        self.noDetector = noDetector
-        # Detector : Confidence value
-        self.confidence = detectorConfidence
-        # Detector : NMS Threshold value
-        self.nms = detectorNms
-        # Detector : NMS method
-        self.nmsMethod = NmsMethod.Nms
+    @staticmethod
+    def PatternAispReid(text: str) -> ReidFileInfo:
+        ''' Parse AISP reid filename.'''
+        # Filename pattern
+        pattern = re.compile(r'ID([-\d]+)_CAM(\d)_FRAME(\d)')
+        # Regular expression : Get results
+        regexResults = pattern.search(text)
+        if regexResults is None:
+            return None
 
-        # File entries list
-        self.files = None
-        # Annotations list
-        self.annotations = []
-        # Readed image cv2 object
-        self.image = None
-        # Current file number offset
-        self.offset = 0
-        # Set of all errors
-        self.errors = set()
+        # Get pid, camid, frame
+        pid, camid, frame = map(int, regexResults.groups())
 
+        return ReidFileInfo(pid, camid, frame)
+
+    @staticmethod
+    def FromFilename(filename: str) -> ReidFileInfo:
+        ''' Create fileinfo from filename.'''
+        # Patter : AISP
+        result = ReidFileInfo.PatternAispReid(filename)
+        if result is not None:
+            return result
+
+        # Pattern : Market1501
+        # @TODO
+
+        return None
+
+
+@dataclass
+class ImageData:
+    ''' Dataclass representing image and features and visuals.'''
+    # Image path
+    path: str = field(init=True, default=None)
+    # Camera number
+    camera: int = field(init=True, default=1)
+    # Image visuals
+    visuals: Visuals = field(init=True, default=None)
+    # Image features
+    features: np.array = field(init=True, default=None)
+
+
+@dataclass
+class Identity:
+    ''' Class representing identity with all images.'''
+    # Identity number :
+    number: int = field(init=True, default=None)
+    # Identity ImageData list
+    images: list = field(init=True, default=None)
+
+
+@dataclass
+class AnnoterReid:
+    ''' Class reading all images and annotations.'''
+    # Path to directory with images
+    dirpath: str = field(init=True, default=None)
+    # Found identities list
+    identities: list = field(init=True, default_factory=list)
+
+    def __post_init__(self):
+        ''' Post init method.'''
+
+        # Location : Open and parse data
         self.OpenLocation(self.dirpath)
 
-    def __del__(self):
-        ''' Destructor.'''
-        # filter only images and not excludes
+    @staticmethod
+    def ImagenameToReidInfo(imagename: str) -> int:
+        ''' Convert imagename to identity number.'''
+        # Filename : Get filename
+        filename = GetFilename(imagename)
+        # Identity : Get identity number
+        identity = int(filename.split('_')[0])
+        return identity
+
+    def OpenLocation(self, path: str):
+        ''' Open images/annotations location.'''
+        # Check : Check if path exists
+        if (not os.path.exists(path)):
+            logging.error('(Annoter) Path `%s` not exists!', path)
+            return
+
+        # Dirpath : Store
+        self.dirpath = path
+
+        # Excludes : List of excludes
         excludes = ['.', '..', './', '.directory']
-        filenames = os.listdir(self.dirpath)
+        # Images : List all directory images.
+        images = [filename for filename in os.listdir(path)
+                  if (filename not in excludes) and (IsImageFile(filename))]
 
-        # Filter images only
-        filenames = [f for f in filenames if (
-            f not in excludes) and (IsImageFile(f))]
+        # Identities : Create identities
+        self.identities = {}
+        # Processing all files
+        startTime = time.time()
+        for index, imagename in enumerate(images):
+            # Filepath : Create filepath
+            imagepath = f'{path}{imagename}'
 
-        # Get only images with annotations
-        filenamesAnnotated = [f for f in filenames if (
-            IsExistsAnnotations(self.dirpath+f) == True)]
+            # ReidInfo : Get reid info
+            reidInfo = ReidFileInfo.FromFilename(imagename)
 
-        # Save results
-        datasetPath = FixPath(self.dirpath)+'dataset.txt'
-        with open(datasetPath, 'w') as f:
-            for line in filenamesAnnotated:
-                f.write(line+'\n')
+            # Calculate visuals
+            visuals = Visuals.LoadCreate(imagepath=imagepath)
 
-            logging.info('(Annoter) Created list of %u/%u annotated images in `%s`.',
-                         len(filenamesAnnotated),
-                         len(filenames),
-                         datasetPath)
+            # Features : LoadCreate features
+            #features = self.LoadCreateFeatures(imagepath=imagepath)
+
+            # Identity : Create identity if not exists
+            if (reidInfo.identity not in self.identities):
+                self.identities[reidInfo.identity] = Identity(number=reidInfo.identity,
+                                                              images=[])
+
+            # Identity : Append image
+            self.identities[reidInfo.identity].images.append(ImageData(path=imagepath,
+                                                                       camera=reidInfo.camera,
+                                                                       visuals=visuals,
+                                                                       features=None))
 
     def GetFileAnnotations(self, filepath):
         ''' Read file annotations if possible.'''
@@ -178,143 +220,6 @@ class Annoter():
             metrics = EvaluateMetrics(txtAnnotes, detAnnotes)
 
         return metrics
-
-    def OpenLocation(self, path: str):
-        ''' Open images/annotations location.'''
-        # Update dirpath
-        self.dirpath = path
-        # filter only images and not excludes
-        excludes = ['.', '..', './', '.directory']
-
-        if (not os.path.exists(path)):
-            logging.error('(Annoter) Path `%s` not exists!', path)
-            return
-
-        # Fiels : List all directory files and exclude not needed.
-        filesToParse = [filename for filename in os.listdir(path)
-                        if (filename not in excludes) and (IsImageFile(filename))]
-
-        # VisualsDuplicates : Create to find duplicates
-        visualsDuplicates = VisualsDuplicates()
-        # Files : List of all files
-        self.files = []
-        # Processing all files
-        startTime = time.time()
-        for index, filename in enumerate(filesToParse):
-            # Check if annotations exists
-            isAnnotation = IsExistsAnnotations(path+filename)
-
-            # Read annotations
-            txtAnnotations = self.GetFileAnnotations(path+filename)
-
-            # Force detector if needed
-            detections = []
-            # Force detector to process every image
-            if (self.config['forceDetector'] == True):
-                im = self.GetFileImage(path+filename)
-                detections = self.ProcessFileDetections(im, path+filename)
-            # Read historical detections
-            else:
-                detections = self.ReadFileDetections(path+filename)
-
-            # For calculation : Filter detections with itself for multiple detections catches.
-            detections = prefilters.FilterIOUbyConfidence(detections,
-                                                          detections)
-
-            # Calculate metrics
-            metrics = self.CalculateYoloMetrics(
-                txtAnnotations, detections)
-            # Calculate visuals
-            visuals = Visuals.LoadCreate(path+filename,
-                                         force=self.config['forceDetector'])
-            # Visuals : Check dhash is in duplicates
-            visuals.isDuplicate = visualsDuplicates.IsDuplicate(visuals)
-            # VisualsDuplicates : Update set of image hashes
-            visualsDuplicates.Add(visuals)
-
-            # For view : Filter by IOU internal with same annotes and also with txt annotes.
-            detections = prefilters.FilterIOUbyConfidence(detections,
-                                                          detections + txtAnnotations)
-
-            # Add file entry
-            self.files.append({
-                'Name': filename,
-                'Path': path+filename,
-                'ID': index,
-                'IsAnnotation': isAnnotation,
-                'Annotations': txtAnnotations,
-                'AnnotationsClasses': ','.join({f'{item.classNumber}' for item in txtAnnotations}),
-                'Datetime': os.lstat(path+filename).st_mtime,
-                'Errors': len(self.errors),
-                'Detections': detections,
-                'Metrics': metrics,
-                'Visuals': visuals,
-            })
-
-            # Logging progress
-            logging.info('(Annoter) Progress: %2.2f%% [%u/%u].',
-                         100*index/len(filesToParse),
-                         index,
-                         len(filesToParse)
-                         )
-            # Logging files per second
-            duration = time.time()-startTime
-            filesPerSecond = index/duration
-            secondsLeft = (len(filesToParse)-index)/(filesPerSecond+0.01)
-            logging.info('(Annoter) FPS: %2.2f. Estimated time left: %s.',
-                         filesPerSecond,
-                         str(timedelta(seconds=secondsLeft))
-                         )
-
-        # ------- Sorting ------------
-        # Sorting : by datetime
-        if (self.config['sortMethod'] == self.SortByDatetime):
-            self.files = sorted(self.files,
-                                key=lambda i: i['Datetime'])
-        elif (self.config['sortMethod'] == self.SortByInvDatetime):
-            self.files = sorted(self.files,
-                                key=lambda i: -i['Datetime'])
-        # Sorting : by alphabet
-        elif (self.config['sortMethod'] == self.SortByAlphabet):
-            self.files = sorted(self.files,
-                                key=lambda i: i['Name'])
-
-        # ------- Filtering  ------------
-        # Use only not annotated files
-        if (self.config['isOnlyNewFiles'] is True):
-            newFiles = []
-            for offset, fileEntry in enumerate(self.files):
-                if (not fileEntry['IsAnnotation']):
-                    newFiles.append(fileEntry)
-
-            self.files = newFiles
-
-        # Use only files with errors
-        if (self.config['isOnlyErrorFiles'] == True):
-            filesWithErrors = []
-            for index, fileEntry in enumerate(self.files):
-                if (fileEntry['Errors'] != 0):
-                    filesWithErrors.append(fileEntry)
-
-            # Swap with files
-            self.files = filesWithErrors
-
-        # Use only files with specific class
-        if (self.config['isOnlySpecificClass'] is not None):
-            filesForClass = []
-            for offset, fileEntry in enumerate(self.files):
-                annotations = self.AnnotationsSelectClasses(
-                    fileEntry['Annotations'], [self.config['isOnlySpecificClass']])
-                if (annotations is not None) and (len(annotations) != 0):
-                    filesForClass.append(fileEntry)
-
-            self.files = filesForClass
-
-        # Reset values at the end
-        self.annotations = []
-        self.image = None
-        self.offset = 0
-        self.errors = set()
 
     def GetFile(self):
         ''' Returns current filepath.'''

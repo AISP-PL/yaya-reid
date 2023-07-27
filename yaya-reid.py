@@ -4,10 +4,9 @@ import numpy as np
 import logging
 import argparse
 import sys
-import engine.annote as annote
-from engine.annoter import *
+from ReID.ReidClassifier import ModelCreate, ModelsList, ModelsPrint
+from engine.AnnoterReid import AnnoterReid
 from helpers.files import *
-from helpers.textAnnotations import *
 from ObjectDetectors import IsCuda, IsDarknet, CreateDetector, GetDetectorLabels
 from MainWindow import MainWindowGui
 
@@ -26,47 +25,26 @@ def main():
                         required=False, help='Show verbose finded and processed data')
     args = parser.parse_args()
 
-    # Check - input argument
-    if (args.input is None):
-        print('Error! No arguments!')
-        sys.exit(-1)
-
-
     # Enabled logging
     if (__debug__ is True):
         logging.basicConfig(stream=sys.stderr, level=logging.DEBUG)
     else:
         logging.basicConfig(stream=sys.stderr, level=logging.INFO)
-    logging.debug('Logging enabled!')
 
-    # Create detector
-
-    scriptPath = os.path.dirname(os.path.realpath(__file__))
-    detector = None
-    if (IsDarknet() and (noDetector is False)):
-        detector = CreateDetector(args.detector, path=scriptPath)
-        if (detector is None):
-            logging.error('Wrong detector!')
-            return
-
-        detector.Init()
-        annote.Init(detector.GetClassNames())
-    # CUDA not installed
-    else:
-        noDetector = True
-        annote.Init(GetDetectorLabels(args.detector))
+    # ReID Classifier : Create
+    models = ModelsList()
+    ModelsPrint(models)
+    ModelCreate(models, 0)
 
     # Create annoter
-    annoter = Annoter(FixPath(GetFileLocation(args.input)),
-                      detector,
-                      noDetector,
-                      args.sortBy,
-                      detectorConfidence=args.detectorConfidence,
-                      detectorNms=args.detectorNms,
-                      )
+    annoter = AnnoterReid(FixPath(GetFileLocation(args.input)),
+                          args.sortBy,
+                          detectorConfidence=args.detectorConfidence,
+                          detectorNms=args.detectorNms,
+                          )
 
     # Start QtGui
-    gui = MainWindowGui(args, detector, annoter)
+    gui = MainWindowGui(args=args,  annoter=annoter)
     sys.exit(gui.Run())
 
 
