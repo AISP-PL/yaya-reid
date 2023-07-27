@@ -44,7 +44,7 @@ class MainWindowGui(Ui_MainWindow):
         # Store annoter handle
         self.annoter = annoter
         # Identity index
-        self.identityIndex = 0
+        self.identityNumber = None
 
         # UI - creation
         self.App = QApplication(sys.argv)
@@ -160,9 +160,12 @@ class MainWindowGui(Ui_MainWindow):
 
     def Setup(self):
         ''' Setup again UI.'''
+        # Identity number : Default first
+        if (self.identityNumber is None):
+            self.identityNumber = self.annoter.indentities_ids[0]
+
         # Identity : Get current
-        identities = list(self.annoter.identities.items())
-        identity = identities[self.identityIndex][1]
+        identity = self.annoter.identities[self.identityNumber]
 
         # Preview : Show
         ViewIdentityPreview.View(self.ui.gallery,
@@ -261,8 +264,9 @@ class MainWindowGui(Ui_MainWindow):
 
     def CallbackFileSelectorItemClicked(self, item):
         ''' When file selector item was clicked.'''
-        # Read current file number
-        fileID = int(item.toolTip())
+        # Identity number : Get
+        self.identityNumber = int(item.toolTip())
+
         # Setup UI again
         self.Setup()
 
@@ -343,12 +347,10 @@ class MainWindowGui(Ui_MainWindow):
 
     def CallbackNextFile(self):
         '''Callback'''
-        self.identityIndex += 1
         self.Setup()
 
     def CallbackPrevFile(self):
         '''Callback'''
-        self.identityIndex -= 1
         self.Setup()
 
     def CallbackOpenLocation(self):
@@ -356,6 +358,7 @@ class MainWindowGui(Ui_MainWindow):
         filepath = str(QFileDialog.getExistingDirectory(
             None, 'Select Directory'))
         self.annoter.OpenLocation(FixPath(filepath))
+
         self.SetupDefault()
         self.Setup()
 

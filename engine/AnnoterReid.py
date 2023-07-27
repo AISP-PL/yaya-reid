@@ -172,6 +172,11 @@ class AnnoterReid:
         self.OpenLocation(self.dirpath)
 
     @property
+    def indentities_ids(self) -> list:
+        ''' Return list of identities ids.'''
+        return list(self.identities.keys())
+
+    @property
     def identities_count(self) -> int:
         ''' Count of identities.'''
         return len(self.identities)
