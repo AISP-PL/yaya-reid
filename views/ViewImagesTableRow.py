@@ -59,8 +59,8 @@ class ViewImagesTableRow:
         table.setItem(rowIndex, colIndex, item)
         colIndex += 1
 
-        # Image features
-        item = QTableWidgetItem(str(identity.features))
+        # Image features @TODO
+        item = QTableWidgetItem('Features')
         item.setToolTip(str(identity.number))
         table.setItem(rowIndex, colIndex, item)
         colIndex += 1
