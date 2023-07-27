@@ -72,6 +72,11 @@ class ImageData:
     # Image features
     features: np.array = field(init=True, default=None)
 
+    @property
+    def name(self) -> str:
+        ''' Return name of image.'''
+        return os.path.basename(self.path)
+
 
 @dataclass
 class Identity:

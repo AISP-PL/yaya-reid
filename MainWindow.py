@@ -16,9 +16,9 @@ from PyQt5 import QtCore, QtGui
 from ViewerEditorImage import ViewerEditorImage
 from engine.AnnoterReid import AnnoterReid
 from helpers.files import ChangeExtension, FixPath
-from copy import copy
 from PyQt5.QtCore import Qt
 from datetime import datetime
+from views.ViewIdentityPreview import ViewIdentityPreview
 from views.ViewImagesSummary import ViewImagesSummary
 from views.ViewImagesTable import ViewImagesTable
 from views.ViewImagesTableRow import ViewImagesTableRow
@@ -160,6 +160,16 @@ class MainWindowGui(Ui_MainWindow):
 
     def Setup(self):
         ''' Setup again UI.'''
+        # Identity : Get current
+        identities = list(self.annoter.identities.items())
+        identity = identities[self.identityIndex][1]
+
+        # Preview : Show
+        ViewIdentityPreview.View(self.ui.gallery,
+                                 self.ui.imagePreview,
+                                 self.ui.imageCorelations,
+                                 identity)
+
         return
         filename = self.annoter.GetFilename()
         imageWidth, imageHeight, imageBytes = self.annoter.GetImageSize()
