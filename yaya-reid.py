@@ -4,11 +4,11 @@ import numpy as np
 import logging
 import argparse
 import sys
-from ReID.ReidClassifier import ModelCreate, ModelsList, ModelsPrint
+from ReID.ReidClassifier import GetReidClassifier, ModelCreate, ModelsList, ModelsPrint
 from engine.AnnoterReid import AnnoterReid
 from helpers.files import *
 from ObjectDetectors import IsCuda, IsDarknet, CreateDetector, GetDetectorLabels
-from MainWindow import MainWindowGui
+# from MainWindow import MainWindowGui
 
 
 def main():
@@ -37,15 +37,14 @@ def main():
     ModelCreate(models, 0)
 
     # Create annoter
-    annoter = AnnoterReid(FixPath(GetFileLocation(args.input)),
-                          args.sortBy,
-                          detectorConfidence=args.detectorConfidence,
-                          detectorNms=args.detectorNms,
+    annoter = AnnoterReid(dirpath=FixPath(GetFileLocation(args.input)),
+                          args=args,
+                          features_classifier=GetReidClassifier()
                           )
 
-    # Start QtGui
-    gui = MainWindowGui(args=args,  annoter=annoter)
-    sys.exit(gui.Run())
+    # # Start QtGui
+    # gui = MainWindowGui(args=args,  annoter=annoter)
+    # sys.exit(gui.Run())
 
 
 if __name__ == '__main__':

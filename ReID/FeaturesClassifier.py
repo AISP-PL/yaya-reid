@@ -8,6 +8,9 @@ import os
 import numpy as np
 import logging
 from torchreid.reid.utils import FeatureExtractor
+from helpers.files import ChangeExtension
+from helpers.json import jsonRead
+import pickle
 
 
 @dataclass
@@ -40,10 +43,6 @@ class FeaturesClassifier:
             device='cuda'
         )
 
-        # Log
-        logging.info('(FeaturesClassifier) Created model: %s, path: %s',
-                     self.model_name, self.model_path)
-
     def Close(self):
         ''' Close features classifier. '''
 
@@ -60,6 +59,40 @@ class FeaturesClassifier:
         features = self.features_extractor(images)
         # Return features
         return list(features.cpu().numpy())
+
+    def LoadCreate(self, imagepath: str) -> np.array:
+        ''' Load if exists, otherwise create, save and return features. '''
+        # Features  : Load
+        features = self.Load(imagepath)
+        if (features is not None):
+            return features
+
+        # Features  : Create
+        features = self.Extract([imagepath])[0]
+        # Features  : Save
+        self.Save(imagepath, features)
+
+        return features
+
+    def Load(self, imagepath: str) -> np.array:
+        ''' Load if exists. '''
+        # Features  : Load
+        picklepath = ChangeExtension(imagepath, '.features.pickle')
+        if (not os.path.exists(picklepath)):
+            return None
+
+        # Load features pickle
+        with open(picklepath, 'rb') as f:
+            features = pickle.load(f)
+            return features
+
+    def Save(self, imagepath: str, features: np.array):
+        ''' Save . '''
+        # Features  : Load
+        picklepath = ChangeExtension(imagepath, '.features.pickle')
+        # SAve features pickle
+        with open(picklepath, 'wb') as f:
+            features = pickle.dump(features, f)
 
     def __eq__(self, classifier: FeaturesClassifier) -> bool:
         ''' Classifiers are equal if they have same model name and model path. '''

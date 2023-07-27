@@ -15,15 +15,14 @@
             "env": {"PYTHONPATH": "${workspaceFolder}"}
         },
         {
-            "name": "YAYA",
+            "name": "YAYA Reid",
             "type": "python",
             "request": "launch",
-            "program": "${workspaceFolder}/yolo-annotate.py",
+            "program": "${workspaceFolder}/yaya-reid.py",
             "console": "integratedTerminal",
             "args": [
                 "-i",
                 "input/",
-                "-nd"
             ],
             "justMyCode": true
         },

@@ -1,7 +1,11 @@
 cvlib==0.2.7
+gdown
+imagehash
 opencv-python-headless>=4.2.0.34
 PyQt5==5.15.7
 pytest==7.2.0
+scipy
+tensorboard
+torch
 torchreid
-pytorch
 torchvision
