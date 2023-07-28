@@ -8,7 +8,7 @@ import sys
 import os
 import logging
 from ReID.FeaturesClassifier import FeaturesClassifier
-from ReID.ReidClassifier import CreateReidClassifier, ModelsList
+from ReID.ReidClassifier import CreateReidClassifier, GetReidClassifier, ModelsList
 from Ui_MainWindow import Ui_MainWindow
 from PyQt5.QtWidgets import QAction, QApplication, QMainWindow, QFileDialog, QTableWidgetItem,\
     QListWidgetItem, QButtonGroup, QMessageBox
@@ -143,8 +143,12 @@ class MainWindowGui(Ui_MainWindow):
         if (self.identityImageNumber is None):
             self.identityImageNumber = 0
 
+        # REID classifier : Get
+        reidClassifier = GetReidClassifier()
         # Identity : Get current
         identity = self.annoter.identities[self.identityNumber]
+        # Identity : Update image features with current reid clasifier
+        identity.FeaturesUpdate(reidClassifier)
 
         # View : Identity
         ViewIdentity.View(self.ui.imagePreview,
@@ -161,10 +165,15 @@ class MainWindowGui(Ui_MainWindow):
 
         # Identity compared preview : Correlations
         if (self.identityComparedNumber is not None):
+            # Identity2 (compared) : Get
+            identityCompared = self.annoter.identities[self.identityComparedNumber]
+            # Identitiy2 : Features update
+            identityCompared.FeaturesUpdate(reidClassifier)
+
             ViewIdentityCorelations.View(self.ui.identityCompareGallery,
                                          identity1=identity,
                                          imageIndex1=self.identityImageNumber,
-                                         identity2=self.annoter.identities[self.identityComparedNumber],
+                                         identity2=identityCompared,
                                          method=self.similarityMethod)
 
     def Run(self):

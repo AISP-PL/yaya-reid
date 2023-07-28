@@ -3,6 +3,7 @@
 
 '''
 from dataclasses import dataclass, field
+from ReID.FeaturesClassifier import FeaturesClassifier
 from engine.ImageData import ImageData
 import numpy as np
 from helpers.algebra import CosineSimilarity, EucledeanDistance, Normalize, NormalizedVectorToInt, Pooling1dToSize, SimilarityMethod
@@ -102,6 +103,18 @@ class Identity:
         vector = Pooling1dToSize(self.features, size=64)
         vector_norm = Normalize(vector)
         return NormalizedVectorToInt(vector_norm)
+
+    def FeaturesUpdate(self, features_classifier: FeaturesClassifier):
+        ''' Update features of all images.'''
+        # Check : Images list is not empty
+        if (len(self.images) == 0):
+            return None
+
+        # Update features
+        for image in self.images:
+            features = features_classifier.LoadCreate(
+                imagepath=image.path, force=True)
+            image.features = features
 
     def ImageSimilarities(self, image: ImageData, method: SimilarityMethod) -> np.array:
         ''' Calculate given image similarities to all identity images.'''

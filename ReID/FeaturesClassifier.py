@@ -63,11 +63,11 @@ class FeaturesClassifier:
         # Return features
         return list(features.cpu().numpy())
 
-    def LoadCreate(self, imagepath: str) -> np.array:
+    def LoadCreate(self, imagepath: str, force: bool = False) -> np.array:
         ''' Load if exists, otherwise create, save and return features. '''
         # Features  : Load
         features = self.Load(imagepath)
-        if (features is not None):
+        if (features is not None) and (not force):
             return features
 
         # Features  : Create
