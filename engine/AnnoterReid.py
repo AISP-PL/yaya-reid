@@ -14,6 +14,7 @@ import cv2
 import logging
 
 import numpy as np
+from helpers.algebra import Normalize, NormalizedVectorToInt, Pooling1dToSize
 from helpers.files import IsImageFile, DeleteFile, GetNotExistingSha1Filepath, FixPath, GetFilename,\
     GetExtension
 from helpers.textAnnotations import ReadAnnotations, SaveAnnotations, IsExistsAnnotations,\
@@ -87,6 +88,15 @@ class Identity:
     images: list = field(init=True, default=None)
 
     @property
+    def image(self) -> ImageData:
+        ''' Return first image.'''
+        # Check : Images list is not empty
+        if (len(self.images) == 0):
+            return None
+
+        return self.images[0]
+
+    @property
     def images_count(self) -> int:
         ''' Count of images.'''
         return len(self.images)
@@ -148,6 +158,13 @@ class Identity:
         average = np.mean(features, axis=0)
 
         return average
+
+    @property
+    def features_binrepr(self) -> int:
+        ''' Return int(binary) representation of features vector.'''
+        vector = Pooling1dToSize(self.features, size=64)
+        vector_norm = Normalize(vector)
+        return NormalizedVectorToInt(vector_norm)
 
 
 @dataclass

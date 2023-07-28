@@ -5,8 +5,9 @@ Created on 1 paź 2020
 '''
 
 import math
-
 import numpy as np
+from numpy import dot, cross
+from numpy.linalg import norm
 
 
 def GetDistance(p1, p2):
@@ -68,6 +69,20 @@ def Pooling1dToSize(vector: np.array, size: int = 64) -> np.array:
     return vector
 
 
+def Normalize(vector: np.array) -> np.array:
+    ''' Normalizes vector to 0..1 range.'''
+    # Check : Invalid vector
+    if vector is None:
+        return None
+
+    # Check : Zero vector
+    if np.all(vector == 0):
+        return vector
+
+    # Normalization : 0..1
+    return (vector - np.min(vector)) / (np.max(vector) - np.min(vector))
+
+
 def NormalizedVectorToInt(vec: np.array) -> int:
     ''' Converts normalized vector to integer.'''
     # Round 0..1 values to 0 or 1
@@ -76,3 +91,14 @@ def NormalizedVectorToInt(vec: np.array) -> int:
     # Convert [0, 1, 0 ..] to 010 string and cast as int
     binary_number = int(''.join(map(str, bin_vec)), 2)
     return binary_number
+
+
+def CosineSimilarity(a: tuple, b: tuple) -> float:
+    ''' Return cosine similarity for two vectors a.b.'''
+    # Normalization : to 0..1
+    normalization = norm(a) * norm(b)
+    # Check : Norm is 0, then similarity is 0. Probably sth went wrong.
+    if (normalization == 0):
+        return 0
+
+    return dot(a, b)/normalization

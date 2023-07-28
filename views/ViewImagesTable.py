@@ -36,6 +36,7 @@ class ViewImagesTable:
             ViewImagesTableRow.View(table, rowIndex, identity)
 
         # GUI - Enable sorting again
+        table.setIconSize(QtCore.QSize(64, 64))
         table.setSortingEnabled(True)
         table.resizeColumnsToContents()
         table.resizeRowsToContents()

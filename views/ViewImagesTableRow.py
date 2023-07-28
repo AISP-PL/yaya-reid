@@ -5,6 +5,8 @@ import logging
 from PyQt5.QtWidgets import QTableWidget, QTableWidgetItem, QAbstractItemView
 from PyQt5 import QtCore
 from PyQt5.QtCore import Qt
+from PyQt5.QtGui import QIcon
+from Gui.widgets.IntTableWidgetItem import IntTableWidgetItem
 from Gui.widgets.FloatTableWidgetItem import FloatTableWidgetItem
 from Gui.widgets.PercentTableWidgetItem import PercentTableWidgetItem
 from Gui.widgets.RectTableWidgetItem import RectTableWidgetItem
@@ -23,7 +25,8 @@ class ViewImagesTableRow:
         colIndex = 0
 
         # Identitiy
-        item = QTableWidgetItem(str(identity.number))
+        image = identity.image
+        item = QTableWidgetItem(QIcon(image.path), str(identity.number))
         item.setToolTip(str(identity.number))
         table.setItem(rowIndex, colIndex, item)
         colIndex += 1
@@ -59,8 +62,8 @@ class ViewImagesTableRow:
         table.setItem(rowIndex, colIndex, item)
         colIndex += 1
 
-        # Image features @TODO
-        item = QTableWidgetItem('Features')
+        # Image features
+        item = IntTableWidgetItem(identity.features_binrepr)
         item.setToolTip(str(identity.number))
         table.setItem(rowIndex, colIndex, item)
         colIndex += 1
