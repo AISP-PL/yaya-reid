@@ -7,22 +7,16 @@ import shutil
 import sys
 import os
 import logging
-from ObjectDetectors.common.Detector import NmsMethod
 from ReID.FeaturesClassifier import FeaturesClassifier
 from Ui_MainWindow import Ui_MainWindow
 from PyQt5.QtWidgets import QApplication, QMainWindow, QFileDialog, QTableWidgetItem,\
     QListWidgetItem, QButtonGroup, QMessageBox
-from PyQt5 import QtCore, QtGui
 from ViewerEditorImage import ViewerEditorImage
 from engine.AnnoterReid import AnnoterReid
 from helpers.files import ChangeExtension, FixPath
-from PyQt5.QtCore import Qt
-from datetime import datetime
+from views.ViewIdentity import ViewIdentity
 from views.ViewIdentityCorelations import ViewIdentityCorelations
-from views.ViewIdentityGallery import ViewIdentityGallery
-from views.ViewImagesSummary import ViewImagesSummary
 from views.ViewImagesTable import ViewImagesTable
-from views.ViewImagesTableRow import ViewImagesTableRow
 
 
 class MainWindowGui(Ui_MainWindow):
@@ -44,10 +38,14 @@ class MainWindowGui(Ui_MainWindow):
         self.args = args
         # Store annoter handle
         self.annoter = annoter
-        # Identity number
+
+        # Identity1 : number
         self.identityNumber = None
-        # Idenitity selected image number
-        self.identitySelectedImageNumber = None
+        # Idenitity1 : Image number
+        self.identityImageNumber = None
+
+        # Identity2 (comapared) : number
+        self.identityComparedNumber = None
 
         # UI - creation
         self.App = QApplication(sys.argv)
@@ -79,7 +77,7 @@ class MainWindowGui(Ui_MainWindow):
         ViewImagesTable.View(self.ui.fileSelectorTableWidget,
                              self.annoter.identities)
         self.ui.fileSelectorTableWidget.itemClicked.connect(
-            self.CallbackFileSelectorItemClicked)
+            self.CallbackIdentitySelectorItemClicked)
 
         # # Images summary : Setup
         # ViewImagesSummary.View(self.ui.fileSummaryLabel,
@@ -95,11 +93,11 @@ class MainWindowGui(Ui_MainWindow):
             self.CallbackSaveCopy)
 
         # # Buttons group - for mode buttons
-        # self.modeButtonGroup = QButtonGroup(self.window)
-        # self.modeButtonGroup.addButton(self.ui.addAnnotationsButton)
-        # self.modeButtonGroup.addButton(self.ui.removeAnnotationsButton)
-        # self.modeButtonGroup.addButton(self.ui.paintCircleButton)
-        # self.modeButtonGroup.addButton(self.ui.renameAnnotationsButton)
+        self.modeButtonGroup = QButtonGroup(self.window)
+        self.modeButtonGroup.addButton(self.ui.selectionIdentity)
+        self.modeButtonGroup.addButton(self.ui.selectionIdentityCompared)
+        # Default Identity selection radio button enabled
+        self.ui.selectionIdentity.setChecked(True)
 
         # Buttons player
         self.ui.nextFileButton.clicked.connect(self.CallbackNextFile)
@@ -129,7 +127,8 @@ class MainWindowGui(Ui_MainWindow):
         #     self.CallbackPaintCircleButton)
 
         # Gallery Callbacks :
-        self.ui.gallery.itemClicked.connect(self.CallbackGalleryItemClicked)
+        self.ui.identityGallery.itemClicked.connect(
+            self.CallbackGalleryItemClicked)
 
     def Setup(self):
         ''' Setup again UI.'''
@@ -138,23 +137,30 @@ class MainWindowGui(Ui_MainWindow):
             self.identityNumber = self.annoter.indentities_ids[0]
 
         # Identitiy selcted image number : Default first
-        if (self.identitySelectedImageNumber is None):
-            self.identitySelectedImageNumber = 0
+        if (self.identityImageNumber is None):
+            self.identityImageNumber = 0
 
         # Identity : Get current
         identity = self.annoter.identities[self.identityNumber]
 
-        # Identity Preview : Show
-        ViewIdentityGallery.View(self.ui.gallery,
-                                 identity)
+        # View : Identity
+        ViewIdentity.View(self.ui.imagePreview,
+                          self.ui.imageDesc,
+                          identity,
+                          self.identityImageNumber)
 
         # Identity Preview : Correlations
-        ViewIdentityCorelations.View(self.ui.imagePreview,
-                                     self.ui.imageDesc,
-                                     self.ui.imageCorelations,
-                                     identity,
-                                     self.identitySelectedImageNumber
-                                     )
+        ViewIdentityCorelations.View(self.ui.identityGallery,
+                                     identity1=identity,
+                                     imageIndex1=self.identityImageNumber,
+                                     identity2=identity)
+
+        # Identity compared preview : Correlations
+        if (self.identityComparedNumber is not None):
+            ViewIdentityCorelations.View(self.ui.identityCompareGallery,
+                                         identity1=identity,
+                                         imageIndex1=self.identityImageNumber,
+                                         identity2=self.annoter.identities[self.identityComparedNumber])
 
     def Run(self):
         '''  Run gui window thread and return exit code.'''
@@ -164,7 +170,7 @@ class MainWindowGui(Ui_MainWindow):
     def CallbackGalleryItemClicked(self, item: QListWidgetItem):
         ''' Callback when gallery item was clicked.'''
         # Identity number : Get
-        self.identitySelectedImageNumber = int(item.toolTip())
+        self.identityImageNumber = int(item.toolTip())
 
         # Setup UI again
         self.Setup()
@@ -176,12 +182,18 @@ class MainWindowGui(Ui_MainWindow):
         ''' Current labels row changed. '''
         self.ui.viewerEditor.SetClassNumber(index)
 
-    def CallbackFileSelectorItemClicked(self, item):
+    def CallbackIdentitySelectorItemClicked(self, item):
         ''' When file selector item was clicked.'''
-        # Identity number : Get
-        self.identityNumber = int(item.toolTip())
-        # Idenitity image number : Reset to None
-        self.identitySelectedImageNumber = None
+        # Selection : Base identity selection
+        if (self.ui.selectionIdentity.isChecked()):
+            # Identity number : Get
+            self.identityNumber = int(item.toolTip())
+            # Idenitity image number : Reset to None
+            self.identityImageNumber = None
+
+        # Selection : Identity compared selection
+        elif (self.ui.selectionIdentityCompared.isChecked()):
+            self.identityComparedNumber = int(item.toolTip())
 
         # Setup UI again
         self.Setup()

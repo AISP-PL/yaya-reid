@@ -70,12 +70,11 @@ class Ui_MainWindow(object):
         self.label_3 = QtWidgets.QLabel(self.verticalLayoutWidget)
         self.label_3.setObjectName('label_3')
         self.verticalLayout_2.addWidget(self.label_3)
-        self.imageCorelations = QtWidgets.QListWidget(
-            self.verticalLayoutWidget)
-        self.imageCorelations.setMinimumSize(QtCore.QSize(0, 300))
-        self.imageCorelations.setMaximumSize(QtCore.QSize(16777215, 250))
-        self.imageCorelations.setObjectName('imageCorelations')
-        self.verticalLayout_2.addWidget(self.imageCorelations)
+        self.identityGallery = QtWidgets.QListWidget(self.verticalLayoutWidget)
+        self.identityGallery.setMinimumSize(QtCore.QSize(0, 300))
+        self.identityGallery.setMaximumSize(QtCore.QSize(16777215, 250))
+        self.identityGallery.setObjectName('identityGallery')
+        self.verticalLayout_2.addWidget(self.identityGallery)
         spacerItem1 = QtWidgets.QSpacerItem(
             20, 40, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
         self.verticalLayout_2.addItem(spacerItem1)
@@ -84,16 +83,17 @@ class Ui_MainWindow(object):
         self.label_7 = QtWidgets.QLabel(self.verticalLayoutWidget)
         self.label_7.setObjectName('label_7')
         self.verticalLayoutLeft.addWidget(self.label_7)
-        self.gallery = QtWidgets.QListWidget(self.verticalLayoutWidget)
+        self.identityCompareGallery = QtWidgets.QListWidget(
+            self.verticalLayoutWidget)
         sizePolicy = QtWidgets.QSizePolicy(
             QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(
-            self.gallery.sizePolicy().hasHeightForWidth())
-        self.gallery.setSizePolicy(sizePolicy)
-        self.gallery.setObjectName('gallery')
-        self.verticalLayoutLeft.addWidget(self.gallery)
+            self.identityCompareGallery.sizePolicy().hasHeightForWidth())
+        self.identityCompareGallery.setSizePolicy(sizePolicy)
+        self.identityCompareGallery.setObjectName('identityCompareGallery')
+        self.verticalLayoutLeft.addWidget(self.identityCompareGallery)
         self.layoutWidget = QtWidgets.QWidget(self.splitter_4)
         self.layoutWidget.setObjectName('layoutWidget')
         self.verticalLayoutRight = QtWidgets.QVBoxLayout(self.layoutWidget)
@@ -165,12 +165,14 @@ class Ui_MainWindow(object):
         self.verticalLayoutRight.addLayout(self.horizontalLayout_2)
         self.Selectionmode = QtWidgets.QHBoxLayout()
         self.Selectionmode.setObjectName('Selectionmode')
-        self.radioButton = QtWidgets.QRadioButton(self.layoutWidget)
-        self.radioButton.setObjectName('radioButton')
-        self.Selectionmode.addWidget(self.radioButton)
-        self.radioButton_2 = QtWidgets.QRadioButton(self.layoutWidget)
-        self.radioButton_2.setObjectName('radioButton_2')
-        self.Selectionmode.addWidget(self.radioButton_2)
+        self.selectionIdentity = QtWidgets.QRadioButton(self.layoutWidget)
+        self.selectionIdentity.setObjectName('selectionIdentity')
+        self.Selectionmode.addWidget(self.selectionIdentity)
+        self.selectionIdentityCompared = QtWidgets.QRadioButton(
+            self.layoutWidget)
+        self.selectionIdentityCompared.setObjectName(
+            'selectionIdentityCompared')
+        self.Selectionmode.addWidget(self.selectionIdentityCompared)
         spacerItem4 = QtWidgets.QSpacerItem(
             40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
         self.Selectionmode.addItem(spacerItem4)
@@ -295,9 +297,9 @@ class Ui_MainWindow(object):
             _translate('MainWindow', '(X)Delete'))
         self.DeleteImageAnnotationsButton.setShortcut(
             _translate('MainWindow', 'X'))
-        self.radioButton.setText(_translate(
-            'MainWindow', 'Selection identity'))
-        self.radioButton_2.setText(_translate(
+        self.selectionIdentity.setText(
+            _translate('MainWindow', 'Selection identity'))
+        self.selectionIdentityCompared.setText(_translate(
             'MainWindow', 'Selection comparison gallery'))
         self.fileSelectorTableWidget.setSortingEnabled(True)
         self.label.setText(_translate('MainWindow', 'Annotations'))

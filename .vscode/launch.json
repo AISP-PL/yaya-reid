@@ -22,7 +22,7 @@
             "console": "integratedTerminal",
             "args": [
                 "-i",
-                "input/",
+                "/home/spasz/Dokumenty/git/aisp-imgdb-reid/data/aispreid/",
             ],
             "justMyCode": true
         },
