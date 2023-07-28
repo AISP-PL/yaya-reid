@@ -18,7 +18,8 @@ from engine.AnnoterReid import AnnoterReid
 from helpers.files import ChangeExtension, FixPath
 from PyQt5.QtCore import Qt
 from datetime import datetime
-from views.ViewIdentityPreview import ViewIdentityPreview
+from views.ViewIdentityCorelations import ViewIdentityCorelations
+from views.ViewIdentityGallery import ViewIdentityGallery
 from views.ViewImagesSummary import ViewImagesSummary
 from views.ViewImagesTable import ViewImagesTable
 from views.ViewImagesTableRow import ViewImagesTableRow
@@ -76,10 +77,6 @@ class MainWindowGui(Ui_MainWindow):
         self.ui.imageScalingComboBox.currentTextChanged.connect(
             self.CallbackImageScalingTextChanged)
 
-        # Paint size slider
-        self.ui.paintSizeSlider.valueChanged.connect(
-            self.CallbackPaintSizeSlider)
-
         # Images table : Setup
         ViewImagesTable.View(self.ui.fileSelectorTableWidget,
                              self.annoter.identities)
@@ -99,12 +96,12 @@ class MainWindowGui(Ui_MainWindow):
         self.ui.actionSave_copy.triggered.connect(
             self.CallbackSaveCopy)
 
-        # Buttons group - for mode buttons
-        self.modeButtonGroup = QButtonGroup(self.window)
-        self.modeButtonGroup.addButton(self.ui.addAnnotationsButton)
-        self.modeButtonGroup.addButton(self.ui.removeAnnotationsButton)
-        self.modeButtonGroup.addButton(self.ui.paintCircleButton)
-        self.modeButtonGroup.addButton(self.ui.renameAnnotationsButton)
+        # # Buttons group - for mode buttons
+        # self.modeButtonGroup = QButtonGroup(self.window)
+        # self.modeButtonGroup.addButton(self.ui.addAnnotationsButton)
+        # self.modeButtonGroup.addButton(self.ui.removeAnnotationsButton)
+        # self.modeButtonGroup.addButton(self.ui.paintCircleButton)
+        # self.modeButtonGroup.addButton(self.ui.renameAnnotationsButton)
 
         # Buttons player
         self.ui.nextFileButton.clicked.connect(self.CallbackNextFile)
@@ -114,49 +111,24 @@ class MainWindowGui(Ui_MainWindow):
             self.CallbackSaveFileAnnotationsButton)
         self.ui.DeleteImageAnnotationsButton.clicked.connect(
             self.CallbackDeleteImageAnnotationsButton)
-        # Buttons - Annotations
-        self.ui.addAnnotationsButton.clicked.connect(
-            self.CallbackAddAnnotationsButton)
-        self.ui.renameAnnotationsButton.clicked.connect(
-            self.CallbackRenameAnnotationsButton)
-        self.ui.removeAnnotationsButton.clicked.connect(
-            self.CallbackRemoveAnnotationsButton)
-        self.ui.detectAnnotationsButton.clicked.connect(
-            self.CallbackDetectAnnotations)
-        self.ui.hideLabelsButton.clicked.connect(
-            self.CallbackHideLabelsButton)
-        self.ui.hideAnnotationsButton.clicked.connect(
-            self.CallbackHideAnnotationsButton)
-        self.ui.ClearAnnotationsButton.clicked.connect(
-            self.CallbackClearAnnotationsButton)
-        # Buttons - Painting
-        self.ui.paintCircleButton.clicked.connect(
-            self.CallbackPaintCircleButton)
-        # Buttons - list of gui key codes
-        self.ui.button1.clicked.connect(
-            lambda: self.CallbackKeycodeButtonClicked(self.ui.button1))
-        self.ui.button2.clicked.connect(
-            lambda: self.CallbackKeycodeButtonClicked(self.ui.button2))
-        self.ui.button3.clicked.connect(
-            lambda: self.CallbackKeycodeButtonClicked(self.ui.button3))
-        self.ui.button4.clicked.connect(
-            lambda: self.CallbackKeycodeButtonClicked(self.ui.button4))
-        self.ui.button5.clicked.connect(
-            lambda: self.CallbackKeycodeButtonClicked(self.ui.button5))
-        self.ui.button6.clicked.connect(
-            lambda: self.CallbackKeycodeButtonClicked(self.ui.button6))
-        self.ui.button7.clicked.connect(
-            lambda: self.CallbackKeycodeButtonClicked(self.ui.button7))
-        self.ui.button8.clicked.connect(
-            lambda: self.CallbackKeycodeButtonClicked(self.ui.button8))
-        self.ui.button9.clicked.connect(
-            lambda: self.CallbackKeycodeButtonClicked(self.ui.button9))
-        self.ui.button10.clicked.connect(
-            lambda: self.CallbackKeycodeButtonClicked(self.ui.button10))
-        self.ui.button11.clicked.connect(
-            lambda: self.CallbackKeycodeButtonClicked(self.ui.button11))
-        self.ui.button12.clicked.connect(
-            lambda: self.CallbackKeycodeButtonClicked(self.ui.button12))
+        # # Buttons - Annotations
+        # self.ui.addAnnotationsButton.clicked.connect(
+        #     self.CallbackAddAnnotationsButton)
+        # self.ui.renameAnnotationsButton.clicked.connect(
+        #     self.CallbackRenameAnnotationsButton)
+        # self.ui.removeAnnotationsButton.clicked.connect(
+        #     self.CallbackRemoveAnnotationsButton)
+        # self.ui.detectAnnotationsButton.clicked.connect(
+        #     self.CallbackDetectAnnotations)
+        # self.ui.hideLabelsButton.clicked.connect(
+        #     self.CallbackHideLabelsButton)
+        # self.ui.hideAnnotationsButton.clicked.connect(
+        #     self.CallbackHideAnnotationsButton)
+        # self.ui.ClearAnnotationsButton.clicked.connect(
+        #     self.CallbackClearAnnotationsButton)
+        # # Buttons - Painting
+        # self.ui.paintCircleButton.clicked.connect(
+        #     self.CallbackPaintCircleButton)
 
     def Setup(self):
         ''' Setup again UI.'''
@@ -167,11 +139,14 @@ class MainWindowGui(Ui_MainWindow):
         # Identity : Get current
         identity = self.annoter.identities[self.identityNumber]
 
-        # Preview : Show
-        ViewIdentityPreview.View(self.ui.gallery,
-                                 self.ui.imagePreview,
-                                 self.ui.imageCorelations,
+        # Identity Preview : Show
+        ViewIdentityGallery.View(self.ui.gallery,
                                  identity)
+
+        # Identity Preview : Correlations
+        ViewIdentityCorelations.View(self.ui.imagePreview,
+                                     self.ui.imageCorelations,
+                                     identity)
 
         return
         filename = self.annoter.GetFilename()
@@ -246,17 +221,6 @@ class MainWindowGui(Ui_MainWindow):
 
     def CallbackImageScalingTextChanged(self, text):
         ''' Callback when image scaling text changed.'''
-        if (text == 'Resize'):
-            self.ui.viewerEditor.SetImageScaling(
-                ViewerEditorImage.ImageScalingResize)
-        elif (text == 'ResizeAspectRatio'):
-            self.ui.viewerEditor.SetImageScaling(
-                ViewerEditorImage.ImageScalingResizeAspectRatio)
-        elif (text == 'OriginalSize'):
-            self.ui.viewerEditor.SetImageScaling(
-                ViewerEditorImage.ImageScalingOriginalSize)
-        else:
-            logging.error('(MainWindow) Unknown value!')
 
     def CallbackLabelsRowChanged(self, index):
         ''' Current labels row changed. '''

@@ -116,7 +116,8 @@ class Identity:
         # Iterate over all images
         for index, image in enumerate(images):
             # Cosine similarity : For all images
-            results = [CosineSimilarity(image, image2) for image2 in images]
+            results = [CosineSimilarity(
+                image.features, image2.features) for image2 in images]
             # Update matrix row
             similarity_matrix[index] = results
 

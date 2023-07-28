@@ -93,7 +93,7 @@ def NormalizedVectorToInt(vec: np.array) -> int:
     return binary_number
 
 
-def CosineSimilarity(a: tuple, b: tuple) -> float:
+def CosineSimilarity(a: np.array, b: np.array) -> np.array:
     ''' Return cosine similarity for two vectors a.b.'''
     # Normalization : to 0..1
     normalization = norm(a) * norm(b)

@@ -7,12 +7,10 @@ from PyQt5 import QtCore
 from PyQt5.QtGui import QIcon
 
 
-class ViewIdentityPreview:
+class ViewIdentityGallery:
 
     @staticmethod
     def View(gallery: QListWidget,
-             preview: QLabel,
-             corelations: QTableWidget,
              identity: Identity):
         ''' View images in table.'''
         # Get translations
