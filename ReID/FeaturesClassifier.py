@@ -43,6 +43,9 @@ class FeaturesClassifier:
             device='cuda'
         )
 
+        logging.info(
+            f'(FeaturesClassifier) Created {self.model_name} {self.model_path}.')
+
     def Close(self):
         ''' Close features classifier. '''
 

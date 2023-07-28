@@ -8,8 +8,9 @@ import sys
 import os
 import logging
 from ReID.FeaturesClassifier import FeaturesClassifier
+from ReID.ReidClassifier import CreateReidClassifier, ModelsList
 from Ui_MainWindow import Ui_MainWindow
-from PyQt5.QtWidgets import QApplication, QMainWindow, QFileDialog, QTableWidgetItem,\
+from PyQt5.QtWidgets import QAction, QApplication, QMainWindow, QFileDialog, QTableWidgetItem,\
     QListWidgetItem, QButtonGroup, QMessageBox
 from ViewerEditorImage import ViewerEditorImage
 from engine.AnnoterReid import AnnoterReid
@@ -83,6 +84,16 @@ class MainWindowGui(Ui_MainWindow):
             self.CallbackOpenLocation)
         self.ui.actionSave_copy.triggered.connect(
             self.CallbackSaveCopy)
+
+        # Menu : Add classifier model to menu Models
+        models = ModelsList()
+        for index, model in enumerate(models):
+            modelName, modelPath = model
+            action = QAction(f'{modelName}:{modelPath}', self.window)
+            action.setToolTip(str(index))
+            self.ui.menuModels.addAction(action)
+        # Menu : Add callback to menu Models
+        self.ui.menuModels.triggered.connect(self.CallbackModelClicked)
 
         # # Buttons group - for mode buttons
         self.modeButtonGroup = QButtonGroup(self.window)
@@ -160,6 +171,17 @@ class MainWindowGui(Ui_MainWindow):
         '''  Run gui window thread and return exit code.'''
         self.window.show()
         return self.App.exec_()
+
+    def CallbackModelClicked(self, action: QAction):
+        ''' Callback when model was clicked.'''
+        models = ModelsList()
+        # Model get  by index from tooltip.
+        model = models[int(action.toolTip())]
+
+        # Model unpack to name and path
+        modelName, modelPath = model
+
+        CreateReidClassifier(modelName, modelPath)
 
     def CallbackGalleryItemClicked(self, item: QListWidgetItem):
         ''' Callback when gallery item was clicked.'''

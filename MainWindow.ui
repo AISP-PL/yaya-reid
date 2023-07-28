@@ -422,8 +422,14 @@
     <addaction name="actionSave_screenshoot"/>
     <addaction name="actionSave_copy"/>
    </widget>
+   <widget class="QMenu" name="menuModels">
+    <property name="title">
+     <string>Models</string>
+    </property>
+   </widget>
    <addaction name="menuMenu"/>
    <addaction name="menuEdit"/>
+   <addaction name="menuModels"/>
    <addaction name="menuPomoc"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
