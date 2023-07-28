@@ -44,8 +44,10 @@ class MainWindowGui(Ui_MainWindow):
         self.args = args
         # Store annoter handle
         self.annoter = annoter
-        # Identity index
+        # Identity number
         self.identityNumber = None
+        # Idenitity selected image number
+        self.identitySelectedImageNumber = None
 
         # UI - creation
         self.App = QApplication(sys.argv)
@@ -130,11 +132,18 @@ class MainWindowGui(Ui_MainWindow):
         # self.ui.paintCircleButton.clicked.connect(
         #     self.CallbackPaintCircleButton)
 
+        # Gallery Callbacks :
+        self.ui.gallery.itemClicked.connect(self.CallbackGalleryItemClicked)
+
     def Setup(self):
         ''' Setup again UI.'''
         # Identity number : Default first
         if (self.identityNumber is None):
             self.identityNumber = self.annoter.indentities_ids[0]
+
+        # Identitiy selcted image number : Default first
+        if (self.identitySelectedImageNumber is None):
+            self.identitySelectedImageNumber = 0
 
         # Identity : Get current
         identity = self.annoter.identities[self.identityNumber]
@@ -146,78 +155,22 @@ class MainWindowGui(Ui_MainWindow):
         # Identity Preview : Correlations
         ViewIdentityCorelations.View(self.ui.imagePreview,
                                      self.ui.imageCorelations,
-                                     identity)
-
-        return
-        filename = self.annoter.GetFilename()
-        imageWidth, imageHeight, imageBytes = self.annoter.GetImageSize()
-        imageNumber = self.annoter.GetFileIndex()
-        imageID = self.annoter.GetFileID()
-        imageCount = self.annoter.GetFilesCount()
-        imageAnnotatedCount = self.annoter.GetFilesAnnotatedCount()
-
-        # Setup progress bar
-        self.ui.progressBar.setMinimum(0)
-        self.ui.progressBar.setMaximum(imageCount)
-        self.ui.progressBar.setValue(imageAnnotatedCount)
-
-        # Setup horizontal file slider
-        self.ui.fileNumberSliderLabel.setText(
-            'ID%u (%u/%u)' % (imageID, imageNumber, imageCount))
-
-        # Setup file info
-        self.ui.fileLabel.setText(
-            f'[{imageWidth}px x {imageHeight}x x {imageBytes}B] {imageID}/{filename} | Annotations: {self.annoter.annotations_count}')
-
-        # Setup files selector table widget
-        fileEntry = self.annoter.GetFile()
-
-        # Find rowIndex of imageNumber
-        rowIndex = self.ImageIDToRowNumber(imageID)
-
-        if (fileEntry is not None):
-            self.ui.fileSelectorTableWidget.setSortingEnabled(False)
-            ViewImagesTableRow.View(self.ui.fileSelectorTableWidget,
-                                    rowIndex,
-                                    fileEntry)
-            self.ui.fileSelectorTableWidget.setSortingEnabled(True)
-
-#         # Setup files selector table widget
-#         self.ui.fileSelectorTableWidget.clearSelection()
-#         if (imageCount != 0):
-#             # Select whole row with image
-#             for i in range(self.ui.fileSelectorTableWidget.columnCount()):
-#                 item = self.ui.fileSelectorTableWidget.item(rowIndex, i)
-#                 item.setSelected(True)
-
-# #             Move verticall scroll bar also
-# #             self.ui.fileSelectorTableWidget.verticalScrollBar().setValue(rowIndex)
-
-        # Paint size slider
-        self.ui.paintLabel.setText('Paint size %u' %
-                                   self.ui.paintSizeSlider.value())
-
-        # Setup isSaved tick
-        if (self.annoter.IsSynchronized()):
-            self.ui.isSavedCheckBox.setChecked(True)
-        else:
-            self.ui.isSavedCheckBox.setChecked(False)
-
-        # Setup errors tick
-        errors = self.annoter.GetErrors()
-        if (len(errors) != 0):
-            self.ui.isErrorsCheckBox.setChecked(True)
-        else:
-            self.ui.isErrorsCheckBox.setChecked(False)
-
-        # Setup viewer/editor
-        self.ui.viewerEditor.SetAnnoter(self.annoter)
-        self.ui.viewerEditor.SetImage(self.annoter.GetImage())
+                                     identity,
+                                     self.identitySelectedImageNumber
+                                     )
 
     def Run(self):
         '''  Run gui window thread and return exit code.'''
         self.window.show()
         return self.App.exec_()
+
+    def CallbackGalleryItemClicked(self, item: QListWidgetItem):
+        ''' Callback when gallery item was clicked.'''
+        # Identity number : Get
+        self.identitySelectedImageNumber = int(item.toolTip())
+
+        # Setup UI again
+        self.Setup()
 
     def CallbackImageScalingTextChanged(self, text):
         ''' Callback when image scaling text changed.'''
@@ -230,6 +183,8 @@ class MainWindowGui(Ui_MainWindow):
         ''' When file selector item was clicked.'''
         # Identity number : Get
         self.identityNumber = int(item.toolTip())
+        # Idenitity image number : Reset to None
+        self.identitySelectedImageNumber = None
 
         # Setup UI again
         self.Setup()

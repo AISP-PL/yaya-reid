@@ -23,7 +23,9 @@ class ViewIdentityGallery:
         gallery.clear()
 
         # For each identity image : Add to gallery
-        for image in identity.images:
+        for index, image in enumerate(identity.images):
             # Item : Create
             item = QListWidgetItem(QIcon(image.path), image.name)
+            # Identity image index : Set as tooltip
+            item.setToolTip(str(index))
             gallery.addItem(item)

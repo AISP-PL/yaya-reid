@@ -154,3 +154,18 @@ def GetNextTableColor():
     .'''
     global defaultColorCycler
     return defaultColorCycler.GetNextColor()
+
+
+def RedYellowGreenInterpolate(val: float) -> tuple:
+    ''' Interpolate color in scale Red -> Yellow -> Green. '''
+    # Value should be in range [0, 1]
+
+    # Limits colors
+    red = (255, 0, 0)
+    yellow = (255, 255, 0)
+    green = (0, 255, 0)
+
+    if val <= 0.5:  # Red -> Yellow
+        return tuple(int(red[i] + 2 * (yellow[i] - red[i]) * val) for i in range(3))
+    else:  # Yellow -> Green
+        return tuple(int(yellow[i] + 2 * (green[i] - yellow[i]) * (val - 0.5)) for i in range(3))
