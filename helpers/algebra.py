@@ -4,10 +4,17 @@ Created on 1 paź 2020
 @author: spasz
 '''
 
+from enum import Enum
 import math
 import numpy as np
 from numpy import dot, cross
 from numpy.linalg import norm
+
+
+class SimilarityMethod(str, Enum):
+    ''' Similarity methods.'''
+    CosineSimilarity = 'CosineSimilarity'
+    EuclideanDistance = 'EuclideanDistance'
 
 
 def GetDistance(p1, p2):
@@ -102,3 +109,8 @@ def CosineSimilarity(a: np.array, b: np.array) -> np.array:
         return 0
 
     return dot(a, b)/normalization
+
+
+def EucledeanDistance(a: np.array, b: np.array) -> np.array:
+    ''' Return euclidean distance for two vectors a.b.'''
+    return norm(a-b)

@@ -13,6 +13,7 @@ from PyQt5.QtWidgets import QApplication, QMainWindow, QFileDialog, QTableWidget
     QListWidgetItem, QButtonGroup, QMessageBox
 from ViewerEditorImage import ViewerEditorImage
 from engine.AnnoterReid import AnnoterReid
+from helpers.algebra import SimilarityMethod
 from helpers.files import ChangeExtension, FixPath
 from views.ViewIdentity import ViewIdentity
 from views.ViewIdentityCorelations import ViewIdentityCorelations
@@ -57,19 +58,10 @@ class MainWindowGui(Ui_MainWindow):
         self.SetupDefault()
         self.Setup()
 
-    def ImageIDToRowNumber(self, imageID):
-        ''' Image number to row index.'''
-        # Found index
-        foundIndex = None
-
-        # Find rowIndex of imageNumber
-        for rowIndex in range(self.ui.fileSelectorTableWidget.rowCount()):
-            item = self.ui.fileSelectorTableWidget.item(rowIndex, 0)
-            if (int(item.toolTip()) == imageID):
-                foundIndex = rowIndex
-                break
-
-        return foundIndex
+    @property
+    def similarityMethod(self) -> SimilarityMethod:
+        ''' Read from qcombobox and return SimilarityMethod.'''
+        return SimilarityMethod[self.ui.similarityMethod.currentText()]
 
     def SetupDefault(self):
         ''' Sets default for UI.'''
@@ -79,9 +71,9 @@ class MainWindowGui(Ui_MainWindow):
         self.ui.fileSelectorTableWidget.itemClicked.connect(
             self.CallbackIdentitySelectorItemClicked)
 
-        # # Images summary : Setup
-        # ViewImagesSummary.View(self.ui.fileSummaryLabel,
-        #                        self.annoter.identities)
+        # ComboBox with method from Enum SimilarityMethod.
+        for method in SimilarityMethod:
+            self.ui.similarityMethod.addItem(method.name)
 
         # Menu handling
         self.ui.actionZamknijProgram.triggered.connect(self.CallbackClose)
@@ -153,14 +145,16 @@ class MainWindowGui(Ui_MainWindow):
         ViewIdentityCorelations.View(self.ui.identityGallery,
                                      identity1=identity,
                                      imageIndex1=self.identityImageNumber,
-                                     identity2=identity)
+                                     identity2=identity,
+                                     method=self.similarityMethod)
 
         # Identity compared preview : Correlations
         if (self.identityComparedNumber is not None):
             ViewIdentityCorelations.View(self.ui.identityCompareGallery,
                                          identity1=identity,
                                          imageIndex1=self.identityImageNumber,
-                                         identity2=self.annoter.identities[self.identityComparedNumber])
+                                         identity2=self.annoter.identities[self.identityComparedNumber],
+                                         method=self.similarityMethod)
 
     def Run(self):
         '''  Run gui window thread and return exit code.'''

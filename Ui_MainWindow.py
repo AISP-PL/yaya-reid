@@ -173,6 +173,9 @@ class Ui_MainWindow(object):
         self.selectionIdentityCompared.setObjectName(
             'selectionIdentityCompared')
         self.Selectionmode.addWidget(self.selectionIdentityCompared)
+        self.similarityMethod = QtWidgets.QComboBox(self.layoutWidget)
+        self.similarityMethod.setObjectName('similarityMethod')
+        self.Selectionmode.addWidget(self.similarityMethod)
         spacerItem4 = QtWidgets.QSpacerItem(
             40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
         self.Selectionmode.addItem(spacerItem4)

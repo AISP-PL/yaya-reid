@@ -5,6 +5,7 @@ from PyQt5.QtWidgets import QTableWidget, QLabel, QListWidget, QListWidgetItem
 from engine.AnnoterReid import Identity
 from PyQt5 import QtCore
 from PyQt5.QtGui import QIcon, QColor
+from helpers.algebra import SimilarityMethod
 
 from helpers.colors import RedYellowGreenInterpolate
 
@@ -16,6 +17,7 @@ class ViewIdentityCorelations:
              identity1: Identity,
              imageIndex1: int,
              identity2: Identity,
+             method: SimilarityMethod,
              ):
         ''' View images in table.'''
         # Get translations
@@ -33,7 +35,7 @@ class ViewIdentityCorelations:
         image = identity1.images[imageIndex1]
 
         # Similarities : Get similarities between image and all images in identity2
-        similarites = identity2.ImageSimilarities(image)
+        similarites = identity2.ImageSimilarities(image, method)
 
         # ImageNumber, Image and similarites : Group together and sort by similarites (descending)
         imageNumbers = list(range(len(identity2.images)))

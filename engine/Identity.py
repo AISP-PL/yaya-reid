@@ -5,7 +5,7 @@
 from dataclasses import dataclass, field
 from engine.ImageData import ImageData
 import numpy as np
-from helpers.algebra import CosineSimilarity, Normalize, NormalizedVectorToInt, Pooling1dToSize
+from helpers.algebra import CosineSimilarity, EucledeanDistance, Normalize, NormalizedVectorToInt, Pooling1dToSize, SimilarityMethod
 
 
 @dataclass
@@ -103,9 +103,14 @@ class Identity:
         vector_norm = Normalize(vector)
         return NormalizedVectorToInt(vector_norm)
 
-    def ImageSimilarities(self, image: ImageData) -> np.array:
+    def ImageSimilarities(self, image: ImageData, method: SimilarityMethod) -> np.array:
         ''' Calculate given image similarities to all identity images.'''
         # Cosine similarity : For all images
-        results = [CosineSimilarity(image.features, image2.features)
-                   for image2 in self.images]
-        return results
+        if (method == SimilarityMethod.CosineSimilarity):
+            return [CosineSimilarity(image.features, image2.features)
+                    for image2 in self.images]
+        elif (method == SimilarityMethod.EuclideanDistance):
+            return [EucledeanDistance(image.features, image2.features)
+                    for image2 in self.images]
+
+        return None
