@@ -38,34 +38,102 @@
          <enum>QLayout::SetMaximumSize</enum>
         </property>
         <item>
-         <layout class="QHBoxLayout" name="horizontalLayout">
+         <layout class="QHBoxLayout" name="horizontalLayout_9">
+          <property name="sizeConstraint">
+           <enum>QLayout::SetMinimumSize</enum>
+          </property>
           <item>
-           <widget class="QLabel" name="label_4">
-            <property name="text">
-             <string>Image scaling:</string>
-            </property>
-           </widget>
+           <layout class="QVBoxLayout" name="verticalLayout">
+            <item>
+             <widget class="QLabel" name="label_6">
+              <property name="text">
+               <string>Identity anchored</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QLabel" name="imagePreview">
+              <property name="maximumSize">
+               <size>
+                <width>16777215</width>
+                <height>250</height>
+               </size>
+              </property>
+              <property name="text">
+               <string>Image</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QLabel" name="imageDesc">
+              <property name="text">
+               <string>Desc</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <spacer name="verticalSpacer_2">
+              <property name="orientation">
+               <enum>Qt::Vertical</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>20</width>
+                <height>40</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+           </layout>
           </item>
           <item>
-           <widget class="QComboBox" name="imageScalingComboBox">
+           <layout class="QVBoxLayout" name="verticalLayout_2">
             <item>
-             <property name="text">
-              <string>Resize</string>
-             </property>
+             <widget class="QLabel" name="label_3">
+              <property name="text">
+               <string>Identity images (selected image, identity images).</string>
+              </property>
+             </widget>
             </item>
             <item>
-             <property name="text">
-              <string>ResizeAspectRatio</string>
-             </property>
+             <widget class="QListWidget" name="imageCorelations">
+              <property name="minimumSize">
+               <size>
+                <width>0</width>
+                <height>300</height>
+               </size>
+              </property>
+              <property name="maximumSize">
+               <size>
+                <width>16777215</width>
+                <height>250</height>
+               </size>
+              </property>
+             </widget>
             </item>
             <item>
-             <property name="text">
-              <string>OriginalSize</string>
-             </property>
+             <spacer name="verticalSpacer">
+              <property name="orientation">
+               <enum>Qt::Vertical</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>20</width>
+                <height>40</height>
+               </size>
+              </property>
+             </spacer>
             </item>
-           </widget>
+           </layout>
           </item>
          </layout>
+        </item>
+        <item>
+         <widget class="QLabel" name="label_7">
+          <property name="text">
+           <string>Comparison identity gallery :</string>
+          </property>
+         </widget>
         </item>
         <item>
          <widget class="QListWidget" name="gallery">
@@ -76,43 +144,6 @@
            </sizepolicy>
           </property>
          </widget>
-        </item>
-        <item>
-         <widget class="QLabel" name="label_3">
-          <property name="text">
-           <string>Images corelation inside identity :</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <layout class="QHBoxLayout" name="horizontalLayout_9">
-          <property name="sizeConstraint">
-           <enum>QLayout::SetMinimumSize</enum>
-          </property>
-          <item>
-           <widget class="QLabel" name="imagePreview">
-            <property name="maximumSize">
-             <size>
-              <width>16777215</width>
-              <height>250</height>
-             </size>
-            </property>
-            <property name="text">
-             <string>TextLabel</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QListWidget" name="imageCorelations">
-            <property name="maximumSize">
-             <size>
-              <width>16777215</width>
-              <height>250</height>
-             </size>
-            </property>
-           </widget>
-          </item>
-         </layout>
         </item>
        </layout>
       </widget>
@@ -248,14 +279,35 @@
          </layout>
         </item>
         <item>
-         <widget class="QLabel" name="fileSummaryLabel">
-          <property name="text">
-           <string>TextLabel</string>
-          </property>
-          <property name="textFormat">
-           <enum>Qt::MarkdownText</enum>
-          </property>
-         </widget>
+         <layout class="QHBoxLayout" name="Selectionmode">
+          <item>
+           <widget class="QRadioButton" name="radioButton">
+            <property name="text">
+             <string>Selection identity</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QRadioButton" name="radioButton_2">
+            <property name="text">
+             <string>Selection comparison gallery</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <spacer name="horizontalSpacer_3">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>40</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+         </layout>
         </item>
         <item>
          <widget class="QTableWidget" name="fileSelectorTableWidget">

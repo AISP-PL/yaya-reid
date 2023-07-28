@@ -13,6 +13,7 @@ class ViewIdentityCorelations:
 
     @staticmethod
     def View(preview: QLabel,
+             desc: QLabel,
              corelations: QListWidget,
              identity: Identity,
              selectedImageIndex: int,
@@ -34,6 +35,9 @@ class ViewIdentityCorelations:
 
         # Preview : QLabel : Load QIcon from image.path and set as pixmap.
         preview.setPixmap(QIcon(image.path).pixmap(200, 200))
+
+        # Preview : QLabel : Desc
+        desc.setText(f'Identity {identity.number} / {image.name}')
 
         # Identitiy : Get Image corelations
         similarites = identity.ImageSimilarities(image)

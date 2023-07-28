@@ -75,10 +75,6 @@ class MainWindowGui(Ui_MainWindow):
 
     def SetupDefault(self):
         ''' Sets default for UI.'''
-        # Image scaling
-        self.ui.imageScalingComboBox.currentTextChanged.connect(
-            self.CallbackImageScalingTextChanged)
-
         # Images table : Setup
         ViewImagesTable.View(self.ui.fileSelectorTableWidget,
                              self.annoter.identities)
@@ -154,6 +150,7 @@ class MainWindowGui(Ui_MainWindow):
 
         # Identity Preview : Correlations
         ViewIdentityCorelations.View(self.ui.imagePreview,
+                                     self.ui.imageDesc,
                                      self.ui.imageCorelations,
                                      identity,
                                      self.identitySelectedImageNumber

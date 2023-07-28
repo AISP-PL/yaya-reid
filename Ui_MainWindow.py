@@ -45,19 +45,45 @@ class Ui_MainWindow(object):
             QtWidgets.QLayout.SetMaximumSize)
         self.verticalLayoutLeft.setContentsMargins(0, 0, 0, 0)
         self.verticalLayoutLeft.setObjectName('verticalLayoutLeft')
-        self.horizontalLayout = QtWidgets.QHBoxLayout()
-        self.horizontalLayout.setObjectName('horizontalLayout')
-        self.label_4 = QtWidgets.QLabel(self.verticalLayoutWidget)
-        self.label_4.setObjectName('label_4')
-        self.horizontalLayout.addWidget(self.label_4)
-        self.imageScalingComboBox = QtWidgets.QComboBox(
+        self.horizontalLayout_9 = QtWidgets.QHBoxLayout()
+        self.horizontalLayout_9.setSizeConstraint(
+            QtWidgets.QLayout.SetMinimumSize)
+        self.horizontalLayout_9.setObjectName('horizontalLayout_9')
+        self.verticalLayout = QtWidgets.QVBoxLayout()
+        self.verticalLayout.setObjectName('verticalLayout')
+        self.label_6 = QtWidgets.QLabel(self.verticalLayoutWidget)
+        self.label_6.setObjectName('label_6')
+        self.verticalLayout.addWidget(self.label_6)
+        self.imagePreview = QtWidgets.QLabel(self.verticalLayoutWidget)
+        self.imagePreview.setMaximumSize(QtCore.QSize(16777215, 250))
+        self.imagePreview.setObjectName('imagePreview')
+        self.verticalLayout.addWidget(self.imagePreview)
+        self.imageDesc = QtWidgets.QLabel(self.verticalLayoutWidget)
+        self.imageDesc.setObjectName('imageDesc')
+        self.verticalLayout.addWidget(self.imageDesc)
+        spacerItem = QtWidgets.QSpacerItem(
+            20, 40, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
+        self.verticalLayout.addItem(spacerItem)
+        self.horizontalLayout_9.addLayout(self.verticalLayout)
+        self.verticalLayout_2 = QtWidgets.QVBoxLayout()
+        self.verticalLayout_2.setObjectName('verticalLayout_2')
+        self.label_3 = QtWidgets.QLabel(self.verticalLayoutWidget)
+        self.label_3.setObjectName('label_3')
+        self.verticalLayout_2.addWidget(self.label_3)
+        self.imageCorelations = QtWidgets.QListWidget(
             self.verticalLayoutWidget)
-        self.imageScalingComboBox.setObjectName('imageScalingComboBox')
-        self.imageScalingComboBox.addItem('')
-        self.imageScalingComboBox.addItem('')
-        self.imageScalingComboBox.addItem('')
-        self.horizontalLayout.addWidget(self.imageScalingComboBox)
-        self.verticalLayoutLeft.addLayout(self.horizontalLayout)
+        self.imageCorelations.setMinimumSize(QtCore.QSize(0, 300))
+        self.imageCorelations.setMaximumSize(QtCore.QSize(16777215, 250))
+        self.imageCorelations.setObjectName('imageCorelations')
+        self.verticalLayout_2.addWidget(self.imageCorelations)
+        spacerItem1 = QtWidgets.QSpacerItem(
+            20, 40, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
+        self.verticalLayout_2.addItem(spacerItem1)
+        self.horizontalLayout_9.addLayout(self.verticalLayout_2)
+        self.verticalLayoutLeft.addLayout(self.horizontalLayout_9)
+        self.label_7 = QtWidgets.QLabel(self.verticalLayoutWidget)
+        self.label_7.setObjectName('label_7')
+        self.verticalLayoutLeft.addWidget(self.label_7)
         self.gallery = QtWidgets.QListWidget(self.verticalLayoutWidget)
         sizePolicy = QtWidgets.QSizePolicy(
             QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
@@ -68,23 +94,6 @@ class Ui_MainWindow(object):
         self.gallery.setSizePolicy(sizePolicy)
         self.gallery.setObjectName('gallery')
         self.verticalLayoutLeft.addWidget(self.gallery)
-        self.label_3 = QtWidgets.QLabel(self.verticalLayoutWidget)
-        self.label_3.setObjectName('label_3')
-        self.verticalLayoutLeft.addWidget(self.label_3)
-        self.horizontalLayout_9 = QtWidgets.QHBoxLayout()
-        self.horizontalLayout_9.setSizeConstraint(
-            QtWidgets.QLayout.SetMinimumSize)
-        self.horizontalLayout_9.setObjectName('horizontalLayout_9')
-        self.imagePreview = QtWidgets.QLabel(self.verticalLayoutWidget)
-        self.imagePreview.setMaximumSize(QtCore.QSize(16777215, 250))
-        self.imagePreview.setObjectName('imagePreview')
-        self.horizontalLayout_9.addWidget(self.imagePreview)
-        self.imageCorelations = QtWidgets.QListWidget(
-            self.verticalLayoutWidget)
-        self.imageCorelations.setMaximumSize(QtCore.QSize(16777215, 250))
-        self.imageCorelations.setObjectName('imageCorelations')
-        self.horizontalLayout_9.addWidget(self.imageCorelations)
-        self.verticalLayoutLeft.addLayout(self.horizontalLayout_9)
         self.layoutWidget = QtWidgets.QWidget(self.splitter_4)
         self.layoutWidget.setObjectName('layoutWidget')
         self.verticalLayoutRight = QtWidgets.QVBoxLayout(self.layoutWidget)
@@ -123,9 +132,9 @@ class Ui_MainWindow(object):
         self.nextFileButton.setIcon(icon1)
         self.nextFileButton.setObjectName('nextFileButton')
         self.sliderLayout.addWidget(self.nextFileButton)
-        spacerItem = QtWidgets.QSpacerItem(
+        spacerItem2 = QtWidgets.QSpacerItem(
             40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
-        self.sliderLayout.addItem(spacerItem)
+        self.sliderLayout.addItem(spacerItem2)
         self.verticalLayoutRight.addLayout(self.sliderLayout)
         self.horizontalLayout_2 = QtWidgets.QHBoxLayout()
         self.horizontalLayout_2.setObjectName('horizontalLayout_2')
@@ -150,14 +159,22 @@ class Ui_MainWindow(object):
         self.DeleteImageAnnotationsButton.setObjectName(
             'DeleteImageAnnotationsButton')
         self.horizontalLayout_2.addWidget(self.DeleteImageAnnotationsButton)
-        spacerItem1 = QtWidgets.QSpacerItem(
+        spacerItem3 = QtWidgets.QSpacerItem(
             40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
-        self.horizontalLayout_2.addItem(spacerItem1)
+        self.horizontalLayout_2.addItem(spacerItem3)
         self.verticalLayoutRight.addLayout(self.horizontalLayout_2)
-        self.fileSummaryLabel = QtWidgets.QLabel(self.layoutWidget)
-        self.fileSummaryLabel.setTextFormat(QtCore.Qt.MarkdownText)
-        self.fileSummaryLabel.setObjectName('fileSummaryLabel')
-        self.verticalLayoutRight.addWidget(self.fileSummaryLabel)
+        self.Selectionmode = QtWidgets.QHBoxLayout()
+        self.Selectionmode.setObjectName('Selectionmode')
+        self.radioButton = QtWidgets.QRadioButton(self.layoutWidget)
+        self.radioButton.setObjectName('radioButton')
+        self.Selectionmode.addWidget(self.radioButton)
+        self.radioButton_2 = QtWidgets.QRadioButton(self.layoutWidget)
+        self.radioButton_2.setObjectName('radioButton_2')
+        self.Selectionmode.addWidget(self.radioButton_2)
+        spacerItem4 = QtWidgets.QSpacerItem(
+            40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
+        self.Selectionmode.addItem(spacerItem4)
+        self.verticalLayoutRight.addLayout(self.Selectionmode)
         self.fileSelectorTableWidget = QtWidgets.QTableWidget(
             self.layoutWidget)
         sizePolicy = QtWidgets.QSizePolicy(
@@ -193,9 +210,9 @@ class Ui_MainWindow(object):
         self.detectAnnotationsButton.setIcon(icon4)
         self.detectAnnotationsButton.setObjectName('detectAnnotationsButton')
         self.horizontalLayout_3.addWidget(self.detectAnnotationsButton)
-        spacerItem2 = QtWidgets.QSpacerItem(
+        spacerItem5 = QtWidgets.QSpacerItem(
             40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
-        self.horizontalLayout_3.addItem(spacerItem2)
+        self.horizontalLayout_3.addItem(spacerItem5)
         self.verticalLayoutRight.addLayout(self.horizontalLayout_3)
         self.gridLayout.addWidget(self.splitter_4, 1, 0, 1, 1)
         MainWindow.setCentralWidget(self.centralwidget)
@@ -254,16 +271,13 @@ class Ui_MainWindow(object):
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate(
             'MainWindow', 'YAYA - YOLO annoter'))
-        self.label_4.setText(_translate('MainWindow', 'Image scaling:'))
-        self.imageScalingComboBox.setItemText(
-            0, _translate('MainWindow', 'Resize'))
-        self.imageScalingComboBox.setItemText(
-            1, _translate('MainWindow', 'ResizeAspectRatio'))
-        self.imageScalingComboBox.setItemText(
-            2, _translate('MainWindow', 'OriginalSize'))
+        self.label_6.setText(_translate('MainWindow', 'Identity anchored'))
+        self.imagePreview.setText(_translate('MainWindow', 'Image'))
+        self.imageDesc.setText(_translate('MainWindow', 'Desc'))
         self.label_3.setText(_translate(
-            'MainWindow', 'Images corelation inside identity :'))
-        self.imagePreview.setText(_translate('MainWindow', 'TextLabel'))
+            'MainWindow', 'Identity images (selected image, identity images).'))
+        self.label_7.setText(_translate(
+            'MainWindow', 'Comparison identity gallery :'))
         self.fileLabel.setText(_translate(
             'MainWindow', 'Filename (number/all)'))
         self.fileNumberSliderLabel.setText(
@@ -281,7 +295,10 @@ class Ui_MainWindow(object):
             _translate('MainWindow', '(X)Delete'))
         self.DeleteImageAnnotationsButton.setShortcut(
             _translate('MainWindow', 'X'))
-        self.fileSummaryLabel.setText(_translate('MainWindow', 'TextLabel'))
+        self.radioButton.setText(_translate(
+            'MainWindow', 'Selection identity'))
+        self.radioButton_2.setText(_translate(
+            'MainWindow', 'Selection comparison gallery'))
         self.fileSelectorTableWidget.setSortingEnabled(True)
         self.label.setText(_translate('MainWindow', 'Annotations'))
         self.detectAnnotationsButton.setText(
