@@ -5,21 +5,17 @@ Created on 17 lis 2020
 '''
 from __future__ import annotations
 from dataclasses import dataclass, field
-from math import sqrt
 import os
 import re
 import time
 from ReID.FeaturesClassifier import FeaturesClassifier
-import cv2
 import logging
 
-import numpy as np
-from helpers.algebra import Normalize, NormalizedVectorToInt, Pooling1dToSize
 from helpers.files import IsImageFile, DeleteFile, GetNotExistingSha1Filepath, FixPath, GetFilename,\
     GetExtension
-from helpers.textAnnotations import ReadAnnotations, SaveAnnotations, IsExistsAnnotations,\
-    DeleteAnnotations, SaveDetections, ReadDetections
 from helpers.visuals import Visuals
+from engine.Identity import Identity
+from engine.ImageData import ImageData
 
 
 @dataclass
@@ -59,112 +55,6 @@ class ReidFileInfo:
         # @TODO
 
         return None
-
-
-@dataclass
-class ImageData:
-    ''' Dataclass representing image and features and visuals.'''
-    # Image path
-    path: str = field(init=True, default=None)
-    # Camera number
-    camera: int = field(init=True, default=1)
-    # Image visuals
-    visuals: Visuals = field(init=True, default=None)
-    # Image features
-    features: np.array = field(init=True, default=None)
-
-    @property
-    def name(self) -> str:
-        ''' Return name of image.'''
-        return os.path.basename(self.path)
-
-
-@dataclass
-class Identity:
-    ''' Class representing identity with all images.'''
-    # Identity number :
-    number: int = field(init=True, default=None)
-    # Identity ImageData list
-    images: list = field(init=True, default=None)
-
-    @property
-    def image(self) -> ImageData:
-        ''' Return first image.'''
-        # Check : Images list is not empty
-        if (len(self.images) == 0):
-            return None
-
-        return self.images[0]
-
-    @property
-    def images_count(self) -> int:
-        ''' Count of images.'''
-        return len(self.images)
-
-    @property
-    def hue(self) -> float:
-        ''' Return average hue of all images.'''
-        # Check : Images list is not empty
-        if (len(self.images) == 0):
-            return None
-
-        # Get hue
-        hue = [image.visuals.hue for image in self.images]
-        return np.mean(hue)
-
-    @property
-    def brightness(self) -> float:
-        ''' Return average brightness of all images.'''
-        # Check : Images list is not empty
-        if (len(self.images) == 0):
-            return None
-
-        # Get brightness
-        brightness = [image.visuals.brightness for image in self.images]
-        return np.mean(brightness)
-
-    @property
-    def saturation(self) -> float:
-        ''' Return average saturation of all images.'''
-        # Check : Images list is not empty
-        if (len(self.images) == 0):
-            return None
-
-        # Get saturation
-        saturation = [image.visuals.saturation for image in self.images]
-        return np.mean(saturation)
-
-    @property
-    def imhash(self) -> float:
-        ''' Return average imhash of all images.'''
-        # Check : Images list is not empty
-        if (len(self.images) == 0):
-            return None
-
-        # Get imhash
-        imhash = [image.visuals.dhash for image in self.images]
-        return np.mean(imhash)
-
-    @property
-    def features(self) -> np.array:
-        ''' Return average features of all np.arrays.'''
-        # Check : Images list is not empty
-        if (len(self.images) == 0):
-            return None
-
-        # Get features
-        features = [image.features for image in self.images]
-        # Get average
-        average = np.mean(features, axis=0)
-
-        return average
-
-    @property
-    def features_binrepr(self) -> int:
-        ''' Return int(binary) representation of features vector.'''
-        vector = Pooling1dToSize(self.features, size=64)
-        vector_norm = Normalize(vector)
-        return NormalizedVectorToInt(vector_norm)
 
 
 @dataclass
