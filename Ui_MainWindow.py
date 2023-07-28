@@ -101,18 +101,18 @@ class Ui_MainWindow(object):
             QtWidgets.QLayout.SetMaximumSize)
         self.verticalLayoutRight.setContentsMargins(0, 0, 0, 0)
         self.verticalLayoutRight.setObjectName('verticalLayoutRight')
-        self.fileLabel = QtWidgets.QLabel(self.layoutWidget)
-        self.fileLabel.setEnabled(True)
+        self.modelDetails = QtWidgets.QLabel(self.layoutWidget)
+        self.modelDetails.setEnabled(True)
         sizePolicy = QtWidgets.QSizePolicy(
             QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(
-            self.fileLabel.sizePolicy().hasHeightForWidth())
-        self.fileLabel.setSizePolicy(sizePolicy)
-        self.fileLabel.setMinimumSize(QtCore.QSize(300, 32))
-        self.fileLabel.setObjectName('fileLabel')
-        self.verticalLayoutRight.addWidget(self.fileLabel)
+            self.modelDetails.sizePolicy().hasHeightForWidth())
+        self.modelDetails.setSizePolicy(sizePolicy)
+        self.modelDetails.setMinimumSize(QtCore.QSize(300, 32))
+        self.modelDetails.setObjectName('modelDetails')
+        self.verticalLayoutRight.addWidget(self.modelDetails)
         self.sliderLayout = QtWidgets.QHBoxLayout()
         self.sliderLayout.setObjectName('sliderLayout')
         self.fileNumberSliderLabel = QtWidgets.QLabel(self.layoutWidget)
@@ -286,7 +286,7 @@ class Ui_MainWindow(object):
             'MainWindow', 'Identity images (selected image, identity images).'))
         self.label_7.setText(_translate(
             'MainWindow', 'Comparison identity gallery :'))
-        self.fileLabel.setText(_translate(
+        self.modelDetails.setText(_translate(
             'MainWindow', 'Filename (number/all)'))
         self.fileNumberSliderLabel.setText(
             _translate('MainWindow', 'Slider label'))
