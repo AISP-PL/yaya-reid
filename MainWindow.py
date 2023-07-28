@@ -145,6 +145,9 @@ class MainWindowGui(Ui_MainWindow):
 
         # REID classifier : Get
         reidClassifier = GetReidClassifier()
+        self.ui.modelDetails.setText(
+            f'{reidClassifier.model_name}:{reidClassifier.model_path}')
+
         # Identity : Get current
         identity = self.annoter.identities[self.identityNumber]
         # Identity : Update image features with current reid clasifier
@@ -191,6 +194,7 @@ class MainWindowGui(Ui_MainWindow):
         modelName, modelPath = model
 
         CreateReidClassifier(modelName, modelPath)
+        self.Setup()
 
     def CallbackGalleryItemClicked(self, item: QListWidgetItem):
         ''' Callback when gallery item was clicked.'''
