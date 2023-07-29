@@ -14,10 +14,12 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('-i', '--input', type=str,
                         required=True, help='Input path')
+    parser.add_argument('-d', '--detectorNumber', type=int, nargs='?', const=0, default=0,
+                        required=False, help='''Detector number from list''')
     parser.add_argument('-nd', '--noDetector', action='store_true',
                         required=False, help='Disable detector pre processing of files.')
-    parser.add_argument('-f', '--forceDetector', action='store_true',
-                        required=False, help='Force detector for every file.')
+    parser.add_argument('-f', '--force', action='store_true',
+                        required=False, help='Force visuals + reid classifier for every file.')
     parser.add_argument('-v', '--verbose', action='store_true',
                         required=False, help='Show verbose finded and processed data')
     args = parser.parse_args()
@@ -31,7 +33,14 @@ def main():
     # ReID Classifier : Create
     models = ModelsList()
     ModelsPrint(models)
-    ModelCreate(models, 0)
+
+    # ReID Classifier : Get number of classifier to create
+    if (args.detectorNumber >= len(models)):
+        logging.error('Invalid REID classifier number %d!',
+                      args.detectorNumber)
+        return
+
+    ModelCreate(models, args.detectorNumber)
 
     # Create annoter
     annoter = AnnoterReid(dirpath=FixPath(GetFileLocation(args.input)),

@@ -6,6 +6,7 @@ from PyQt5.QtWidgets import QTableWidget, QTableWidgetItem, QAbstractItemView
 from PyQt5 import QtCore
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QIcon
+from Gui.widgets.IdentityTableWidgetItem import IdentityTableWidgetItem
 from Gui.widgets.IntTableWidgetItem import IntTableWidgetItem
 from Gui.widgets.FloatTableWidgetItem import FloatTableWidgetItem
 from Gui.widgets.PercentTableWidgetItem import PercentTableWidgetItem
@@ -26,7 +27,8 @@ class ViewImagesTableRow:
 
         # Identitiy
         image = identity.image
-        item = QTableWidgetItem(QIcon(image.path), str(identity.number))
+        item = IdentityTableWidgetItem(QIcon(image.path),
+                                       identity.number)
         item.setToolTip(str(identity.number))
         table.setItem(rowIndex, colIndex, item)
         colIndex += 1

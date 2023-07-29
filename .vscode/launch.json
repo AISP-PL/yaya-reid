@@ -23,6 +23,8 @@
             "args": [
                 "-i",
                 "/home/spasz/Dokumenty/git/aisp-imgdb-reid/data/aispreid/",
+                "-d",
+                "1",
             ],
             "justMyCode": true
         },

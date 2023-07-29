@@ -10,6 +10,7 @@ import re
 import time
 from ReID.FeaturesClassifier import FeaturesClassifier
 import logging
+import tqdm
 
 from helpers.files import IsImageFile, DeleteFile, GetNotExistingSha1Filepath, FixPath, GetFilename,\
     GetExtension
@@ -133,7 +134,8 @@ class AnnoterReid:
             visuals = Visuals.LoadCreate(imagepath=imagepath)
 
             # Features : LoadCreate features
-            features = self.features_classifier.LoadCreate(imagepath=imagepath)
+            features = self.features_classifier.LoadCreate(
+                imagepath=imagepath, force=self.args.force)
 
             # Identity : Create identity if not exists
             if (reidInfo.identity not in self.identities):

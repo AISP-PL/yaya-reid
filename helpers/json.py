@@ -44,7 +44,6 @@ def jsonRead(filename: str) -> dict:
     with open(filename, 'r') as f:
         try:
             data = json.load(f)
-            logging.debug('(Json) Readed %s.\n', (filename))
             return data
         except JSONDecodeError:
             logging.error('(Json) Invalid JSON file content!')
@@ -58,8 +57,6 @@ def jsonWrite(filename: str, data: dict) -> None:
                   indent=4,
                   sort_keys=False,
                   cls=EnhancedJSONEncoder)
-
-    logging.debug('(Json) Written %s.\n', filename)
 
 
 def jsonShow(data: dict):
