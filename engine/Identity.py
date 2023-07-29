@@ -104,6 +104,19 @@ class Identity:
         vector_norm = Normalize(vector)
         return NormalizedVectorToInt(vector_norm)
 
+    @property
+    def consistency(self) -> float:
+        ''' Return min images features cosine distance.
+            Named an identity consistency.'''
+        # Check : Images list is not empty
+        if (len(self.images) == 0):
+            return 0
+
+        # Get Image0 to other images similarities
+        similarities = self.ImageSimilarities(image=self.images[0],
+                                              method=SimilarityMethod.CosineSimilarity)
+        return min(similarities)
+
     def FeaturesUpdate(self, features_classifier: FeaturesClassifier):
         ''' Update features of all images.'''
         # Check : Images list is not empty
@@ -116,7 +129,7 @@ class Identity:
                 imagepath=image.path, force=True)
             image.features = features
 
-    def ImageSimilarities(self, image: ImageData, method: SimilarityMethod) -> np.array:
+    def ImageSimilarities(self, image: ImageData, method: SimilarityMethod) -> list:
         ''' Calculate given image similarities to all identity images.'''
         # Cosine similarity : For all images
         if (method == SimilarityMethod.CosineSimilarity):

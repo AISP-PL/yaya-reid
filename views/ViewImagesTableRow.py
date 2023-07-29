@@ -62,6 +62,12 @@ class ViewImagesTableRow:
         table.setItem(rowIndex, colIndex, item)
         colIndex += 1
 
+        # Image consistency
+        item = FloatTableWidgetItem(identity.consistency)
+        item.setToolTip(str(identity.number))
+        table.setItem(rowIndex, colIndex, item)
+        colIndex += 1
+
         # Image features
         item = IntTableWidgetItem(identity.features_binrepr)
         item.setToolTip(str(identity.number))

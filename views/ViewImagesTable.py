@@ -24,7 +24,7 @@ class ViewImagesTable:
         table.clear()
         labels = _translate('ViewImagesTable',
                             'Identity;Images;Hue;Saturation;Brightness;ImHash;' +
-                            'Features').split(';')
+                            'Consistency;FeaturesBinRep').split(';')
         table.setColumnCount(len(labels))
         table.setHorizontalHeaderLabels(labels)
         table.setRowCount(len(identities))
