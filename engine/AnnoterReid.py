@@ -10,7 +10,7 @@ import re
 import time
 from ReID.FeaturesClassifier import FeaturesClassifier
 import logging
-import tqdm
+from tqdm import tqdm
 
 from helpers.files import IsImageFile, DeleteFile, GetNotExistingSha1Filepath, FixPath, GetFilename,\
     GetExtension
@@ -119,6 +119,10 @@ class AnnoterReid:
         images = [filename for filename in os.listdir(path)
                   if (filename not in excludes) and (IsImageFile(filename))]
 
+        # ProgressBar : Create
+        progress = tqdm(total=len(images),
+                        desc=f'Loading reid images', unit='images')
+
         # Identities : Create identities
         self.identities = {}
         # Processing all files
@@ -147,3 +151,9 @@ class AnnoterReid:
                                                                        camera=reidInfo.camera,
                                                                        visuals=visuals,
                                                                        features=features))
+
+            # Progress : Update
+            progress.update(1)
+
+        # Progress : Close
+        progress.close()
