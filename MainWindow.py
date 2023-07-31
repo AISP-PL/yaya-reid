@@ -14,7 +14,7 @@ from PyQt5.QtWidgets import QAction, QApplication, QMainWindow, QFileDialog, QTa
     QListWidgetItem, QButtonGroup, QMessageBox
 from ViewerEditorImage import ViewerEditorImage
 from engine.AnnoterReid import AnnoterReid
-from helpers.algebra import SimilarityMethod
+from helpers.algebra import CosineSimilarity, SimilarityMethod
 from helpers.files import ChangeExtension, FixPath
 from views.ViewIdentity import ViewIdentity
 from views.ViewIdentityCorelations import ViewIdentityCorelations
@@ -102,9 +102,9 @@ class MainWindowGui(Ui_MainWindow):
         # Default Identity selection radio button enabled
         self.ui.selectionIdentity.setChecked(True)
 
-        # Buttons player
-        self.ui.nextFileButton.clicked.connect(self.CallbackNextFile)
-        self.ui.prevFileButton.clicked.connect(self.CallbackPrevFile)
+        # # Buttons player
+        # self.ui.nextFileButton.clicked.connect(self.CallbackNextFile)
+        # self.ui.prevFileButton.clicked.connect(self.CallbackPrevFile)
         # Buttons Image
         self.ui.SaveFileAnnotationsButton.clicked.connect(
             self.CallbackSaveFileAnnotationsButton)
@@ -152,6 +152,13 @@ class MainWindowGui(Ui_MainWindow):
         identity = self.annoter.identities[self.identityNumber]
         # Identity : Update image features with current reid clasifier
         identity.FeaturesUpdate(reidClassifier)
+
+        # REID classifier : View all model details
+        self.ui.modelResults.setText(f'**ALL : consistency: {self.annoter.consistency_avg*100:2.2f}%,\n' +
+                                     f'separation: {self.annoter.separation_avg*100:2.2f}%.**\n\n'
+                                     f'**Identity** consistency: {identity.consistency*100:2.2f}%,\n' +
+                                     f'separation: {self.annoter.SeprationAvg(identity)*100:2.2f}%.'
+                                     )
 
         # View : Identity
         ViewIdentity.View(self.ui.imagePreview,

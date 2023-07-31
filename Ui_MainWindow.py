@@ -47,7 +47,7 @@ class Ui_MainWindow(object):
         self.verticalLayoutLeft.setObjectName('verticalLayoutLeft')
         self.horizontalLayout_9 = QtWidgets.QHBoxLayout()
         self.horizontalLayout_9.setSizeConstraint(
-            QtWidgets.QLayout.SetMinimumSize)
+            QtWidgets.QLayout.SetMaximumSize)
         self.horizontalLayout_9.setObjectName('horizontalLayout_9')
         self.verticalLayout = QtWidgets.QVBoxLayout()
         self.verticalLayout.setObjectName('verticalLayout')
@@ -66,13 +66,22 @@ class Ui_MainWindow(object):
         self.verticalLayout.addItem(spacerItem)
         self.horizontalLayout_9.addLayout(self.verticalLayout)
         self.verticalLayout_2 = QtWidgets.QVBoxLayout()
+        self.verticalLayout_2.setSizeConstraint(
+            QtWidgets.QLayout.SetMaximumSize)
         self.verticalLayout_2.setObjectName('verticalLayout_2')
         self.label_3 = QtWidgets.QLabel(self.verticalLayoutWidget)
         self.label_3.setObjectName('label_3')
         self.verticalLayout_2.addWidget(self.label_3)
         self.identityGallery = QtWidgets.QListWidget(self.verticalLayoutWidget)
+        sizePolicy = QtWidgets.QSizePolicy(
+            QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(
+            self.identityGallery.sizePolicy().hasHeightForWidth())
+        self.identityGallery.setSizePolicy(sizePolicy)
         self.identityGallery.setMinimumSize(QtCore.QSize(0, 300))
-        self.identityGallery.setMaximumSize(QtCore.QSize(16777215, 250))
+        self.identityGallery.setMaximumSize(QtCore.QSize(16777215, 450))
         self.identityGallery.setObjectName('identityGallery')
         self.verticalLayout_2.addWidget(self.identityGallery)
         spacerItem1 = QtWidgets.QSpacerItem(
@@ -104,66 +113,51 @@ class Ui_MainWindow(object):
         self.modelDetails = QtWidgets.QLabel(self.layoutWidget)
         self.modelDetails.setEnabled(True)
         sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Fixed)
+            QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(
             self.modelDetails.sizePolicy().hasHeightForWidth())
         self.modelDetails.setSizePolicy(sizePolicy)
         self.modelDetails.setMinimumSize(QtCore.QSize(300, 32))
+        self.modelDetails.setTextFormat(QtCore.Qt.MarkdownText)
         self.modelDetails.setObjectName('modelDetails')
         self.verticalLayoutRight.addWidget(self.modelDetails)
-        self.sliderLayout = QtWidgets.QHBoxLayout()
-        self.sliderLayout.setObjectName('sliderLayout')
-        self.fileNumberSliderLabel = QtWidgets.QLabel(self.layoutWidget)
-        self.fileNumberSliderLabel.setObjectName('fileNumberSliderLabel')
-        self.sliderLayout.addWidget(self.fileNumberSliderLabel)
-        self.prevFileButton = QtWidgets.QToolButton(self.layoutWidget)
-        icon = QtGui.QIcon()
-        icon.addPixmap(QtGui.QPixmap(
-            ':/icons/16x16/media-skip-backward.png'), QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        self.prevFileButton.setIcon(icon)
-        self.prevFileButton.setObjectName('prevFileButton')
-        self.sliderLayout.addWidget(self.prevFileButton)
-        self.nextFileButton = QtWidgets.QToolButton(self.layoutWidget)
-        icon1 = QtGui.QIcon()
-        icon1.addPixmap(QtGui.QPixmap(
-            ':/icons/16x16/media-skip-forward.png'), QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        self.nextFileButton.setIcon(icon1)
-        self.nextFileButton.setObjectName('nextFileButton')
-        self.sliderLayout.addWidget(self.nextFileButton)
-        spacerItem2 = QtWidgets.QSpacerItem(
-            40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
-        self.sliderLayout.addItem(spacerItem2)
-        self.verticalLayoutRight.addLayout(self.sliderLayout)
+        self.modelResults = QtWidgets.QLabel(self.layoutWidget)
+        self.modelResults.setTextFormat(QtCore.Qt.MarkdownText)
+        self.modelResults.setObjectName('modelResults')
+        self.verticalLayoutRight.addWidget(self.modelResults)
         self.horizontalLayout_2 = QtWidgets.QHBoxLayout()
+        self.horizontalLayout_2.setSizeConstraint(
+            QtWidgets.QLayout.SetMinimumSize)
         self.horizontalLayout_2.setObjectName('horizontalLayout_2')
         self.label_2 = QtWidgets.QLabel(self.layoutWidget)
         self.label_2.setObjectName('label_2')
         self.horizontalLayout_2.addWidget(self.label_2)
         self.SaveFileAnnotationsButton = QtWidgets.QPushButton(
             self.layoutWidget)
-        icon2 = QtGui.QIcon()
-        icon2.addPixmap(QtGui.QPixmap(
+        icon = QtGui.QIcon()
+        icon.addPixmap(QtGui.QPixmap(
             ':/icons/16x16/document-save-as.png'), QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        self.SaveFileAnnotationsButton.setIcon(icon2)
+        self.SaveFileAnnotationsButton.setIcon(icon)
         self.SaveFileAnnotationsButton.setObjectName(
             'SaveFileAnnotationsButton')
         self.horizontalLayout_2.addWidget(self.SaveFileAnnotationsButton)
         self.DeleteImageAnnotationsButton = QtWidgets.QPushButton(
             self.layoutWidget)
-        icon3 = QtGui.QIcon()
-        icon3.addPixmap(QtGui.QPixmap(
+        icon1 = QtGui.QIcon()
+        icon1.addPixmap(QtGui.QPixmap(
             ':/icons/16x16/process-stop.png'), QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        self.DeleteImageAnnotationsButton.setIcon(icon3)
+        self.DeleteImageAnnotationsButton.setIcon(icon1)
         self.DeleteImageAnnotationsButton.setObjectName(
             'DeleteImageAnnotationsButton')
         self.horizontalLayout_2.addWidget(self.DeleteImageAnnotationsButton)
-        spacerItem3 = QtWidgets.QSpacerItem(
+        spacerItem2 = QtWidgets.QSpacerItem(
             40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
-        self.horizontalLayout_2.addItem(spacerItem3)
+        self.horizontalLayout_2.addItem(spacerItem2)
         self.verticalLayoutRight.addLayout(self.horizontalLayout_2)
         self.Selectionmode = QtWidgets.QHBoxLayout()
+        self.Selectionmode.setSizeConstraint(QtWidgets.QLayout.SetMinimumSize)
         self.Selectionmode.setObjectName('Selectionmode')
         self.selectionIdentity = QtWidgets.QRadioButton(self.layoutWidget)
         self.selectionIdentity.setObjectName('selectionIdentity')
@@ -176,20 +170,22 @@ class Ui_MainWindow(object):
         self.similarityMethod = QtWidgets.QComboBox(self.layoutWidget)
         self.similarityMethod.setObjectName('similarityMethod')
         self.Selectionmode.addWidget(self.similarityMethod)
-        spacerItem4 = QtWidgets.QSpacerItem(
+        spacerItem3 = QtWidgets.QSpacerItem(
             40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
-        self.Selectionmode.addItem(spacerItem4)
+        self.Selectionmode.addItem(spacerItem3)
         self.verticalLayoutRight.addLayout(self.Selectionmode)
         self.fileSelectorTableWidget = QtWidgets.QTableWidget(
             self.layoutWidget)
         sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
+            QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Expanding)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(
             self.fileSelectorTableWidget.sizePolicy().hasHeightForWidth())
         self.fileSelectorTableWidget.setSizePolicy(sizePolicy)
-        self.fileSelectorTableWidget.setMinimumSize(QtCore.QSize(0, 300))
+        self.fileSelectorTableWidget.setMinimumSize(QtCore.QSize(0, 400))
+        self.fileSelectorTableWidget.setMaximumSize(
+            QtCore.QSize(16777215, 16777215))
         self.fileSelectorTableWidget.setVerticalScrollBarPolicy(
             QtCore.Qt.ScrollBarAlwaysOn)
         self.fileSelectorTableWidget.setSizeAdjustPolicy(
@@ -203,21 +199,23 @@ class Ui_MainWindow(object):
         self.fileSelectorTableWidget.setRowCount(0)
         self.verticalLayoutRight.addWidget(self.fileSelectorTableWidget)
         self.horizontalLayout_3 = QtWidgets.QHBoxLayout()
+        self.horizontalLayout_3.setSizeConstraint(
+            QtWidgets.QLayout.SetMinimumSize)
         self.horizontalLayout_3.setObjectName('horizontalLayout_3')
         self.label = QtWidgets.QLabel(self.layoutWidget)
         self.label.setMinimumSize(QtCore.QSize(90, 0))
         self.label.setObjectName('label')
         self.horizontalLayout_3.addWidget(self.label)
         self.detectAnnotationsButton = QtWidgets.QPushButton(self.layoutWidget)
-        icon4 = QtGui.QIcon()
-        icon4.addPixmap(QtGui.QPixmap(
+        icon2 = QtGui.QIcon()
+        icon2.addPixmap(QtGui.QPixmap(
             ':/icons/16x16/camera-photo.png'), QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        self.detectAnnotationsButton.setIcon(icon4)
+        self.detectAnnotationsButton.setIcon(icon2)
         self.detectAnnotationsButton.setObjectName('detectAnnotationsButton')
         self.horizontalLayout_3.addWidget(self.detectAnnotationsButton)
-        spacerItem5 = QtWidgets.QSpacerItem(
+        spacerItem4 = QtWidgets.QSpacerItem(
             40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
-        self.horizontalLayout_3.addItem(spacerItem5)
+        self.horizontalLayout_3.addItem(spacerItem4)
         self.verticalLayoutRight.addLayout(self.horizontalLayout_3)
         self.gridLayout.addWidget(self.splitter_4, 1, 0, 1, 1)
         MainWindow.setCentralWidget(self.centralwidget)
@@ -288,12 +286,7 @@ class Ui_MainWindow(object):
             'MainWindow', 'Comparison identity gallery :'))
         self.modelDetails.setText(_translate(
             'MainWindow', 'Filename (number/all)'))
-        self.fileNumberSliderLabel.setText(
-            _translate('MainWindow', 'Slider label'))
-        self.prevFileButton.setText(_translate('MainWindow', '...'))
-        self.prevFileButton.setShortcut(_translate('MainWindow', ','))
-        self.nextFileButton.setText(_translate('MainWindow', '...'))
-        self.nextFileButton.setShortcut(_translate('MainWindow', '.'))
+        self.modelResults.setText(_translate('MainWindow', 'TextLabel'))
         self.label_2.setText(_translate('MainWindow', 'Image'))
         self.SaveFileAnnotationsButton.setText(
             _translate('MainWindow', '(S)ave'))

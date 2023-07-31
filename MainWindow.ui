@@ -40,7 +40,7 @@
         <item>
          <layout class="QHBoxLayout" name="horizontalLayout_9">
           <property name="sizeConstraint">
-           <enum>QLayout::SetMinimumSize</enum>
+           <enum>QLayout::SetMaximumSize</enum>
           </property>
           <item>
            <layout class="QVBoxLayout" name="verticalLayout">
@@ -88,6 +88,9 @@
           </item>
           <item>
            <layout class="QVBoxLayout" name="verticalLayout_2">
+            <property name="sizeConstraint">
+             <enum>QLayout::SetMaximumSize</enum>
+            </property>
             <item>
              <widget class="QLabel" name="label_3">
               <property name="text">
@@ -97,6 +100,12 @@
             </item>
             <item>
              <widget class="QListWidget" name="identityGallery">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
               <property name="minimumSize">
                <size>
                 <width>0</width>
@@ -106,7 +115,7 @@
               <property name="maximumSize">
                <size>
                 <width>16777215</width>
-                <height>250</height>
+                <height>450</height>
                </size>
               </property>
              </widget>
@@ -158,7 +167,7 @@
            <bool>true</bool>
           </property>
           <property name="sizePolicy">
-           <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+           <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
             <horstretch>0</horstretch>
             <verstretch>0</verstretch>
            </sizepolicy>
@@ -172,62 +181,26 @@
           <property name="text">
            <string>Filename (number/all)</string>
           </property>
+          <property name="textFormat">
+           <enum>Qt::MarkdownText</enum>
+          </property>
          </widget>
         </item>
         <item>
-         <layout class="QHBoxLayout" name="sliderLayout">
-          <item>
-           <widget class="QLabel" name="fileNumberSliderLabel">
-            <property name="text">
-             <string>Slider label</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QToolButton" name="prevFileButton">
-            <property name="text">
-             <string>...</string>
-            </property>
-            <property name="icon">
-             <iconset resource="icons/tango.qrc">
-              <normaloff>:/icons/16x16/media-skip-backward.png</normaloff>:/icons/16x16/media-skip-backward.png</iconset>
-            </property>
-            <property name="shortcut">
-             <string>,</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QToolButton" name="nextFileButton">
-            <property name="text">
-             <string>...</string>
-            </property>
-            <property name="icon">
-             <iconset resource="icons/tango.qrc">
-              <normaloff>:/icons/16x16/media-skip-forward.png</normaloff>:/icons/16x16/media-skip-forward.png</iconset>
-            </property>
-            <property name="shortcut">
-             <string>.</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <spacer name="horizontalSpacer_4">
-            <property name="orientation">
-             <enum>Qt::Horizontal</enum>
-            </property>
-            <property name="sizeHint" stdset="0">
-             <size>
-              <width>40</width>
-              <height>20</height>
-             </size>
-            </property>
-           </spacer>
-          </item>
-         </layout>
+         <widget class="QLabel" name="modelResults">
+          <property name="text">
+           <string>TextLabel</string>
+          </property>
+          <property name="textFormat">
+           <enum>Qt::MarkdownText</enum>
+          </property>
+         </widget>
         </item>
         <item>
          <layout class="QHBoxLayout" name="horizontalLayout_2">
+          <property name="sizeConstraint">
+           <enum>QLayout::SetMinimumSize</enum>
+          </property>
           <item>
            <widget class="QLabel" name="label_2">
             <property name="text">
@@ -280,6 +253,9 @@
         </item>
         <item>
          <layout class="QHBoxLayout" name="Selectionmode">
+          <property name="sizeConstraint">
+           <enum>QLayout::SetMinimumSize</enum>
+          </property>
           <item>
            <widget class="QRadioButton" name="selectionIdentity">
             <property name="text">
@@ -315,7 +291,7 @@
         <item>
          <widget class="QTableWidget" name="fileSelectorTableWidget">
           <property name="sizePolicy">
-           <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+           <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
             <horstretch>0</horstretch>
             <verstretch>0</verstretch>
            </sizepolicy>
@@ -323,7 +299,13 @@
           <property name="minimumSize">
            <size>
             <width>0</width>
-            <height>300</height>
+            <height>400</height>
+           </size>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>16777215</width>
+            <height>16777215</height>
            </size>
           </property>
           <property name="verticalScrollBarPolicy">
@@ -345,6 +327,9 @@
         </item>
         <item>
          <layout class="QHBoxLayout" name="horizontalLayout_3">
+          <property name="sizeConstraint">
+           <enum>QLayout::SetMinimumSize</enum>
+          </property>
           <item>
            <widget class="QLabel" name="label">
             <property name="minimumSize">

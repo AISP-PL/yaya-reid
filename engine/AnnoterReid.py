@@ -8,9 +8,12 @@ from dataclasses import dataclass, field
 import os
 import re
 import time
+
+import numpy as np
 from ReID.FeaturesClassifier import FeaturesClassifier
 import logging
 from tqdm import tqdm
+from helpers.algebra import CosineSimilarity
 
 from helpers.files import IsImageFile, DeleteFile, GetNotExistingSha1Filepath, FixPath, GetFilename,\
     GetExtension
@@ -68,7 +71,10 @@ class AnnoterReid:
     # ReID features classifier
     features_classifier: FeaturesClassifier = field(init=True, default=None)
     # Found identities list
-    identities: list = field(init=False, default_factory=list)
+    identities: dict = field(init=False, default_factory=list)
+
+    # Matrix of Identity.features x Identity.features similarities
+    similarity_matrix: np.ndarray = field(init=False, default=None)
 
     def __post_init__(self):
         ''' Post init method.'''
@@ -94,6 +100,45 @@ class AnnoterReid:
         ''' Count of images.'''
         return sum([len(identity.images) for identity in self.identities])
 
+    @property
+    def consistency_avg(self) -> float:
+        ''' Return average consistency.'''
+        # Consistency : Get all consistency
+        consistency = [
+            self.identities[identityID].consistency for identityID in self.identities]
+        # Return average
+        return sum(consistency) / len(consistency)
+
+    @property
+    def similarity_avg(self) -> float:
+        ''' Return average similarity.'''
+        return np.mean(self.similarity_matrix)
+
+    @property
+    def similarity_min(self) -> float:
+        ''' Return minimum similarity.'''
+        return np.min(self.similarity_matrix)
+
+    @property
+    def similarity_max(self) -> float:
+        ''' Return maximum similarity.'''
+        return np.max(self.similarity_matrix)
+
+    @property
+    def separation_avg(self) -> float:
+        ''' Return average separation.'''
+        return 1 - self.similarity_avg
+
+    @property
+    def separation_min(self) -> float:
+        ''' Return minimum separation.'''
+        return 1 - self.similarity_max
+
+    @property
+    def separation_max(self) -> float:
+        ''' Return maximum separation.'''
+        return 1 - self.similarity_min
+
     @staticmethod
     def ImagenameToReidInfo(imagename: str) -> int:
         ''' Convert imagename to identity number.'''
@@ -102,6 +147,14 @@ class AnnoterReid:
         # Identity : Get identity number
         identity = int(filename.split('_')[0])
         return identity
+
+    def SeprationAvg(self, identity: Identity) -> float:
+        ''' Return separation of identity.'''
+        # Index position in matrix
+        index = self.indentities_ids.index(identity.number)
+        # Similarity : Get similarity
+        similarity = np.mean(self.similarity_matrix[index, :])
+        return 1 - similarity
 
     def OpenLocation(self, path: str):
         ''' Open images/annotations location.'''
@@ -157,3 +210,31 @@ class AnnoterReid:
 
         # Progress : Close
         progress.close()
+
+        # Similarity Matrix : Create
+        self.SimilarityMatrixCreate()
+
+    def SimilarityMatrixCreate(self):
+        ''' Create similarity matrix.'''
+        # Create matrix
+        self.similarity_matrix = np.zeros(
+            (self.identities_count, self.identities_count))
+
+        # Progress : Create
+        progress = tqdm(total=self.identities_count,
+                        desc=f'Creating similarity matrix',
+                        unit='identities')
+
+        # Processing all identities
+        for index1, identityID1 in enumerate(self.identities):
+            # Processing all identities
+            for index2, identityID2 in enumerate(self.identities):
+                # Similarity : Calculate similarity
+                similarity = CosineSimilarity(self.identities[identityID1].features,
+                                              self.identities[identityID2].features)
+
+                # Matrix : Store
+                self.similarity_matrix[index1, index2] = similarity
+
+            # Progress : Update
+            progress.update(1)
