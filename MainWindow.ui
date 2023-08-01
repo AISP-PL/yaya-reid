@@ -109,13 +109,13 @@
               <property name="minimumSize">
                <size>
                 <width>0</width>
-                <height>300</height>
+                <height>400</height>
                </size>
               </property>
               <property name="maximumSize">
                <size>
                 <width>16777215</width>
-                <height>450</height>
+                <height>600</height>
                </size>
               </property>
              </widget>
@@ -138,7 +138,7 @@
          </layout>
         </item>
         <item>
-         <widget class="QLabel" name="label_7">
+         <widget class="QLabel" name="identityCompareLabel">
           <property name="text">
            <string>Comparison identity gallery :</string>
           </property>
@@ -202,37 +202,23 @@
            <enum>QLayout::SetMinimumSize</enum>
           </property>
           <item>
-           <widget class="QLabel" name="label_2">
+           <widget class="QLabel" name="identitiesSelectedLabel">
             <property name="text">
-             <string>Image</string>
+             <string>Identities</string>
             </property>
            </widget>
           </item>
           <item>
-           <widget class="QPushButton" name="SaveFileAnnotationsButton">
+           <widget class="QPushButton" name="mergeIdentitiesButton">
             <property name="text">
-             <string>(S)ave</string>
+             <string>Merge</string>
             </property>
             <property name="icon">
              <iconset resource="icons/tango.qrc">
-              <normaloff>:/icons/16x16/document-save-as.png</normaloff>:/icons/16x16/document-save-as.png</iconset>
+              <normaloff>:/icons/32x32/emblem-favorite.png</normaloff>:/icons/32x32/emblem-favorite.png</iconset>
             </property>
             <property name="shortcut">
              <string>S</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QPushButton" name="DeleteImageAnnotationsButton">
-            <property name="text">
-             <string>(X)Delete</string>
-            </property>
-            <property name="icon">
-             <iconset resource="icons/tango.qrc">
-              <normaloff>:/icons/16x16/process-stop.png</normaloff>:/icons/16x16/process-stop.png</iconset>
-            </property>
-            <property name="shortcut">
-             <string>X</string>
             </property>
            </widget>
           </item>
@@ -324,53 +310,6 @@
            <bool>true</bool>
           </property>
          </widget>
-        </item>
-        <item>
-         <layout class="QHBoxLayout" name="horizontalLayout_3">
-          <property name="sizeConstraint">
-           <enum>QLayout::SetMinimumSize</enum>
-          </property>
-          <item>
-           <widget class="QLabel" name="label">
-            <property name="minimumSize">
-             <size>
-              <width>90</width>
-              <height>0</height>
-             </size>
-            </property>
-            <property name="text">
-             <string>Annotations</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QPushButton" name="detectAnnotationsButton">
-            <property name="text">
-             <string>(D)etect </string>
-            </property>
-            <property name="icon">
-             <iconset resource="icons/tango.qrc">
-              <normaloff>:/icons/16x16/camera-photo.png</normaloff>:/icons/16x16/camera-photo.png</iconset>
-            </property>
-            <property name="shortcut">
-             <string>D</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <spacer name="horizontalSpacer_2">
-            <property name="orientation">
-             <enum>Qt::Horizontal</enum>
-            </property>
-            <property name="sizeHint" stdset="0">
-             <size>
-              <width>40</width>
-              <height>20</height>
-             </size>
-            </property>
-           </spacer>
-          </item>
-         </layout>
         </item>
        </layout>
       </widget>

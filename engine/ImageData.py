@@ -15,6 +15,8 @@ class ImageData:
     path: str = field(init=True, default=None)
     # Camera number
     camera: int = field(init=True, default=1)
+    # Image/Frame number
+    frame: int = field(init=True, default=1)
     # Image visuals
     visuals: Visuals = field(init=True, default=None)
     # Image features

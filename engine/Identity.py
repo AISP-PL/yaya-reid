@@ -2,6 +2,7 @@
     Single ReID identity with all images.
 
 '''
+from __future__ import annotations
 from dataclasses import dataclass, field
 from functools import cached_property
 from ReID.FeaturesClassifier import FeaturesClassifier
@@ -39,6 +40,17 @@ class Identity:
     def images_count(self) -> int:
         ''' Count of images.'''
         return len(self.images)
+
+    @property
+    def last_frame(self) -> int:
+        ''' Return last frame number.'''
+        # Check : Images list is not empty
+        if (len(self.images) == 0):
+            return 0
+
+        # Frame numbers
+        frames = sorted([image.frame for image in self.images])
+        return frames[-1]
 
     @cached_property
     def hue(self) -> float:
@@ -119,6 +131,16 @@ class Identity:
                                               method=SimilarityMethod.CosineSimilarity)
         return min(similarities)
 
+    def AddImage(self, image: ImageData):
+        ''' Add image to identity.'''
+        # Check : Image is not None
+        if (image is None):
+            return None
+
+        # Add image
+        self.images.append(image)
+        sorted(self.images, key=lambda image: image.frame)
+
     def FeaturesUpdate(self, features_classifier: FeaturesClassifier):
         ''' Update features of all images.'''
         # Check : Images list is not empty
@@ -142,3 +164,19 @@ class Identity:
                     for image2 in self.images]
 
         return None
+
+    def Merge(self, identity2: Identity):
+        ''' Merge identity2 to self.'''
+        # Add images
+        self.images.extend(identity2.images)
+        # Sort images
+        self.images = sorted(self.images, key=lambda image: image.frame)
+
+        # Reset cached properties
+        self.__dict__.pop('hue', None)
+        self.__dict__.pop('brightness', None)
+        self.__dict__.pop('saturation', None)
+        self.__dict__.pop('imhash', None)
+        self.__dict__.pop('features', None)
+        self.__dict__.pop('features_binrepr', None)
+        self.__dict__.pop('consistency', None)

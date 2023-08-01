@@ -214,6 +214,7 @@ class AnnoterReid:
             # Identity : Append image
             self.identities[reidInfo.identity].images.append(ImageData(path=imagepath,
                                                                        camera=reidInfo.camera,
+                                                                       frame=reidInfo.frame,
                                                                        visuals=visuals,
                                                                        features=features))
 

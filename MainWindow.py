@@ -106,10 +106,12 @@ class MainWindowGui(Ui_MainWindow):
         # self.ui.nextFileButton.clicked.connect(self.CallbackNextFile)
         # self.ui.prevFileButton.clicked.connect(self.CallbackPrevFile)
         # Buttons Image
-        self.ui.SaveFileAnnotationsButton.clicked.connect(
-            self.CallbackSaveFileAnnotationsButton)
-        self.ui.DeleteImageAnnotationsButton.clicked.connect(
-            self.CallbackDeleteImageAnnotationsButton)
+        self.ui.mergeIdentitiesButton.clicked.connect(
+            self.CallbackMergeIdentitiesButton)
+        # self.ui.SaveFileAnnotationsButton.clicked.connect(
+        #     self.CallbackSaveFileAnnotationsButton)
+        # self.ui.DeleteImageAnnotationsButton.clicked.connect(
+        #     self.CallbackDeleteImageAnnotationsButton)
         # # Buttons - Annotations
         # self.ui.addAnnotationsButton.clicked.connect(
         #     self.CallbackAddAnnotationsButton)
@@ -180,11 +182,22 @@ class MainWindowGui(Ui_MainWindow):
             # Identitiy2 : Features update
             identityCompared.FeaturesUpdate(reidClassifier)
 
+            # Identitiy compared : Label
+            self.ui.identityCompareLabel.setText(
+                f'Identity compared : {self.identityComparedNumber}.')
+
+            # Identitiy compared : View
             ViewIdentityCorelations.View(self.ui.identityCompareGallery,
                                          identity1=identity,
                                          imageIndex1=self.identityImageNumber,
                                          identity2=identityCompared,
                                          method=self.similarityMethod)
+
+        # Identities : Label
+        text = f'Selected {self.identityNumber} '
+        if (self.identityComparedNumber is not None):
+            text += f' compared {self.identityComparedNumber}.'
+        self.ui.identitiesSelectedLabel.setText(text)
 
     def Run(self):
         '''  Run gui window thread and return exit code.'''
@@ -242,6 +255,38 @@ class MainWindowGui(Ui_MainWindow):
 
         # Setup UI again
         self.Setup()
+
+    def CallbackMergeIdentitiesButton(self):
+        ''' Merge two identities.'''
+        # Check : Ideentiti selected number is not None
+        if (self.identityNumber is None):
+            return
+
+        # Check : Identity compared number is not None
+        if (self.identityComparedNumber is None):
+            return
+
+        # Check : Identity number is not equal to identity compared number
+        if (self.identityNumber == self.identityComparedNumber):
+            return
+
+        # Identity1 : Get
+        identity1 = self.annoter.identities[self.identityNumber]
+        # Identity2 : Get
+        identity2 = self.annoter.identities[self.identityComparedNumber]
+
+        # Identity1 : Merge identiy1 <- identity2
+        identity1.Merge(identity2)
+
+        # Identity2 : Remove from annoter
+        self.annoter.identities.remove(identity2)
+        # Identity2 : Remove from table (find row with identity2 first)
+        for rowNumber in range(self.ui.fileSelectorTableWidget.rowCount()):
+            identityNumber = int(
+                self.ui.fileSelectorTableWidget.item(rowNumber, 0).toolTip())
+            if (identityNumber == self.identityComparedNumber):
+                self.ui.fileSelectorTableWidget.removeRow(rowNumber)
+                break
 
     def CallbackPaintSizeSlider(self):
         ''' Paint size slider changed.'''
