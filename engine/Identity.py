@@ -169,11 +169,15 @@ class Identity:
             return None
 
         # Update features
-
         for image in self.images:
             features = features_classifier.LoadCreate(
                 imagepath=image.path, force=True)
             image.features = features
+
+        # Cached : Clear items with features
+        self.__dict__.pop('features', None)
+        self.__dict__.pop('features_binrepr', None)
+        self.__dict__.pop('consistency', None)
 
     def ImageSimilarities(self, image: ImageData, method: SimilarityMethod) -> list:
         ''' Calculate given image similarities to all identity images.'''
