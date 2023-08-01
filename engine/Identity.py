@@ -5,7 +5,9 @@
 from __future__ import annotations
 from dataclasses import dataclass, field
 from functools import cached_property
+import shutil
 from ReID.FeaturesClassifier import FeaturesClassifier
+from engine.ReidFileInfo import ReidDataset, ReidFileInfo
 from engine.ImageData import ImageData
 import numpy as np
 from helpers.algebra import CosineSimilarity, EucledeanDistance, MaxPooling1dToSize, Normalize, NormalizedVectorToInt, Pooling1dToSize, SimilarityMethod
@@ -18,6 +20,8 @@ class Identity:
     number: int = field(init=True, default=None)
     # Identity ImageData list
     images: list = field(init=True, default=None)
+    # Identity dataset type
+    dataset: ReidDataset = field(init=True, default=ReidDataset.AispReid)
 
     def __post_init__(self):
         ''' Post init.'''
@@ -165,11 +169,25 @@ class Identity:
 
         return None
 
-    def Merge(self, identity2: Identity):
+    def Merge(self,
+              identity2: Identity):
         ''' Merge identity2 to self.'''
-        # Add images
+        # Identity2 : Renumber images
+        for index, image in enumerate(identity2.images):
+            image.frame = self.last_frame + index + 1
+
+        # Images : Move on disk and update paths
+        for image in identity2.images:
+            expectedPath = ReidFileInfo.toPath(identity_number=self.number,
+                                               camera_number=image.camera,
+                                               frame_number=image.frame,
+                                               dataset=self.dataset
+                                               )
+            # Move image
+            shutil.move(image.path, f'{image.location}/{expectedPath}')
+
+        # Images : Extend with identity2 images and sort
         self.images.extend(identity2.images)
-        # Sort images
         self.images = sorted(self.images, key=lambda image: image.frame)
 
         # Reset cached properties

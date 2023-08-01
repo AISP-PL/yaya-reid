@@ -6,59 +6,17 @@ Created on 17 lis 2020
 from __future__ import annotations
 from dataclasses import dataclass, field
 import os
-import re
 import time
-
 import numpy as np
 from ReID.FeaturesClassifier import FeaturesClassifier
 import logging
 from tqdm import tqdm
+from engine.ReidFileInfo import ReidFileInfo
 from helpers.algebra import CosineSimilarity
-
-from helpers.files import IsImageFile, DeleteFile, GetNotExistingSha1Filepath, FixPath, GetFilename,\
-    GetExtension
+from helpers.files import IsImageFile,  GetFilename
 from helpers.visuals import Visuals
 from engine.Identity import Identity
 from engine.ImageData import ImageData
-
-
-@dataclass
-class ReidFileInfo:
-    ''' Informations stored in name of reid image file.'''
-    # Identity number
-    identity: int = field(init=True, default=None)
-    # Camera number
-    camera: int = field(init=True, default=None)
-    # Frame number
-    frame: int = field(init=True, default=None)
-
-    @staticmethod
-    def PatternAispReid(text: str) -> ReidFileInfo:
-        ''' Parse AISP reid filename.'''
-        # Filename pattern
-        pattern = re.compile(r'ID([-\d]+)_CAM(\d)_FRAME(\d)')
-        # Regular expression : Get results
-        regexResults = pattern.search(text)
-        if regexResults is None:
-            return None
-
-        # Get pid, camid, frame
-        pid, camid, frame = map(int, regexResults.groups())
-
-        return ReidFileInfo(pid, camid, frame)
-
-    @staticmethod
-    def FromFilename(filename: str) -> ReidFileInfo:
-        ''' Create fileinfo from filename.'''
-        # Patter : AISP
-        result = ReidFileInfo.PatternAispReid(filename)
-        if result is not None:
-            return result
-
-        # Pattern : Market1501
-        # @TODO
-
-        return None
 
 
 @dataclass
@@ -148,6 +106,17 @@ class AnnoterReid:
         identity = int(filename.split('_')[0])
         return identity
 
+    def Remove(self, identity: Identity):
+        ''' Remove identity.'''
+        # Identity : Get index from keys
+        index = self.indentities_ids.index(identity.number)
+
+        # Identity : Remove identity
+        self.identities.pop(identity.number)
+        # Similarity matrix : Remove row and column
+        self.similarity_matrix = np.delete(self.similarity_matrix, index, 0)
+        self.similarity_matrix = np.delete(self.similarity_matrix, index, 1)
+
     def Similarities(self, identity: Identity) -> dict:
         ''' Return identity (to other identities) similarities as dict.'''
         # Row index of identity in matrix
@@ -209,7 +178,9 @@ class AnnoterReid:
             # Identity : Create identity if not exists
             if (reidInfo.identity not in self.identities):
                 self.identities[reidInfo.identity] = Identity(number=reidInfo.identity,
-                                                              images=[])
+                                                              images=[],
+                                                              dataset=reidInfo.dataset,
+                                                              )
 
             # Identity : Append image
             self.identities[reidInfo.identity].images.append(ImageData(path=imagepath,

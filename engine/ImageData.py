@@ -23,6 +23,11 @@ class ImageData:
     features: np.array = field(init=True, default=None)
 
     @property
+    def location(self) -> str:
+        ''' Return location of image.'''
+        return os.path.dirname(self.path)
+
+    @property
     def name(self) -> str:
         ''' Return name of image.'''
         return os.path.basename(self.path)

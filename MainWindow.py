@@ -279,7 +279,7 @@ class MainWindowGui(Ui_MainWindow):
         identity1.Merge(identity2)
 
         # Identity2 : Remove from annoter
-        self.annoter.identities.remove(identity2)
+        self.annoter.Remove(identity2)
         # Identity2 : Remove from table (find row with identity2 first)
         for rowNumber in range(self.ui.fileSelectorTableWidget.rowCount()):
             identityNumber = int(
