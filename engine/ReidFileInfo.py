@@ -47,7 +47,7 @@ class ReidFileInfo:
     def PatternAispReid(text: str) -> ReidFileInfo:
         ''' Parse AISP reid filename.'''
         # Filename pattern
-        pattern = re.compile(r'ID([-\d]+)_CAM(\d)_FRAME(\d)')
+        pattern = re.compile(r'ID([-\d]+)_CAM([\d]+)_FRAME([\d]+)')
         # Regular expression : Get results
         regexResults = pattern.search(text)
         if regexResults is None:
