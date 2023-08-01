@@ -259,7 +259,6 @@ class Ui_MainWindow(object):
         self.identitiesSelectedLabel.setText(
             _translate('MainWindow', 'Identities'))
         self.mergeIdentitiesButton.setText(_translate('MainWindow', 'Merge'))
-        self.mergeIdentitiesButton.setShortcut(_translate('MainWindow', 'S'))
         self.selectionIdentity.setText(
             _translate('MainWindow', 'Selection identity'))
         self.selectionIdentityCompared.setText(_translate(
