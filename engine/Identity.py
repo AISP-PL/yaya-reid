@@ -152,6 +152,7 @@ class Identity:
             return None
 
         # Update features
+
         for image in self.images:
             features = features_classifier.LoadCreate(
                 imagepath=image.path, force=True)
@@ -172,22 +173,31 @@ class Identity:
     def Merge(self,
               identity2: Identity):
         ''' Merge identity2 to self.'''
-        # Identity2 : Renumber images
-        for index, image in enumerate(identity2.images):
-            image.frame = self.last_frame + index + 1
+        # last_frame : Get
+        last_frame = self.last_frame
 
         # Images : Move on disk and update paths
-        for image in identity2.images:
-            expectedPath = ReidFileInfo.toPath(identity_number=self.number,
+        for index, image in enumerate(identity2.images):
+            # Image : Update frame number
+            image.frame = last_frame + index + 1
+
+            # Expected path : Create
+            expectedName = ReidFileInfo.toPath(identity_number=self.number,
                                                camera_number=image.camera,
                                                frame_number=image.frame,
                                                dataset=self.dataset
                                                )
-            # Move image
-            shutil.move(image.path, f'{image.location}/{expectedPath}')
+            expectedPath = f'{image.location}/{expectedName}'
+            # Move image to expected path.
+            shutil.move(image.path, expectedPath)
 
-        # Images : Extend with identity2 images and sort
-        self.images.extend(identity2.images)
+            # Image : Update path
+            image.path = expectedPath
+
+            # Images : Add moved image
+            self.images.append(image)
+
+        # Images : Sort by frame
         self.images = sorted(self.images, key=lambda image: image.frame)
 
         # Reset cached properties

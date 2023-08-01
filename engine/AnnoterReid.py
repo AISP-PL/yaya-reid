@@ -155,12 +155,13 @@ class AnnoterReid:
 
         # ProgressBar : Create
         progress = tqdm(total=len(images),
-                        desc=f'Loading reid images', unit='images')
+                        desc=f'Loading reid images',
+                        unit='images',
+                        leave=False)
 
         # Identities : Create identities
         self.identities = {}
         # Processing all files
-        startTime = time.time()
         for index, imagename in enumerate(images):
             # Filepath : Create filepath
             imagepath = f'{path}{imagename}'
@@ -207,7 +208,8 @@ class AnnoterReid:
         # Progress : Create
         progress = tqdm(total=self.identities_count,
                         desc=f'Creating similarity matrix',
-                        unit='identities')
+                        unit='identities',
+                        leave=False)
 
         # Processing all identities
         for index1, identityID1 in enumerate(self.identities):
