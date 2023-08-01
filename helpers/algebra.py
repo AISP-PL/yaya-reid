@@ -76,6 +76,25 @@ def Pooling1dToSize(vector: np.array, size: int = 64) -> np.array:
     return vector
 
 
+def MaxPooling1d(vector: np.array) -> np.array:
+    ''' Pools mean/arithmetic average of vector 2 elements pairs.'''
+    reshaped = vector.reshape(-1, 2)
+    return np.max(reshaped, axis=1)
+
+
+def MaxPooling1dToSize(vector: np.array, size: int = 64) -> np.array:
+    ''' Pools mean/arithmetic average of vector 2 elements pairs.'''
+    # Check : Invalid vector
+    if vector is None:
+        return None
+
+    # Loop : Pooling until size is reached
+    while (vector.size > size):
+        vector = MaxPooling1d(vector)
+
+    return vector
+
+
 def Normalize(vector: np.array) -> np.array:
     ''' Normalizes vector to 0..1 range.'''
     # Check : Invalid vector
@@ -87,7 +106,7 @@ def Normalize(vector: np.array) -> np.array:
         return vector
 
     # Normalization : 0..1
-    return (vector - np.min(vector)) / (np.max(vector) - np.min(vector))
+    return vector / np.max(vector)
 
 
 def NormalizedVectorToInt(vec: np.array) -> int:

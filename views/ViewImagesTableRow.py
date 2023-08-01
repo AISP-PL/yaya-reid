@@ -17,7 +17,11 @@ from engine.AnnoterReid import Identity
 class ViewImagesTableRow:
 
     @staticmethod
-    def View(table: QTableWidget, rowIndex: int, identity: Identity):
+    def View(table: QTableWidget,
+             rowIndex: int,
+             identity: Identity,
+             similarity: float = 0,
+             ):
         ''' View images in table.'''
         # Get translations
         _translate = QtCore.QCoreApplication.translate
@@ -66,6 +70,12 @@ class ViewImagesTableRow:
 
         # Image consistency
         item = FloatTableWidgetItem(identity.consistency)
+        item.setToolTip(str(identity.number))
+        table.setItem(rowIndex, colIndex, item)
+        colIndex += 1
+
+        # Identity similarity to selected identity (given as parameter)
+        item = FloatTableWidgetItem(similarity)
         item.setToolTip(str(identity.number))
         table.setItem(rowIndex, colIndex, item)
         colIndex += 1

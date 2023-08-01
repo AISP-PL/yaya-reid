@@ -148,7 +148,19 @@ class AnnoterReid:
         identity = int(filename.split('_')[0])
         return identity
 
-    def SeprationAvg(self, identity: Identity) -> float:
+    def Similarities(self, identity: Identity) -> dict:
+        ''' Return identity (to other identities) similarities as dict.'''
+        # Row index of identity in matrix
+        index = self.indentities_ids.index(identity.number)
+
+        # Similarities dict : Create from matrix
+        similarities = {}
+        for index, value in enumerate(self.similarity_matrix[index, :]):
+            similarities[self.indentities_ids[index]] = value
+
+        return similarities
+
+    def SeparationAvg(self, identity: Identity) -> float:
         ''' Return separation of identity.'''
         # Index position in matrix
         index = self.indentities_ids.index(identity.number)

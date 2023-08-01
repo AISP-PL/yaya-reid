@@ -6,7 +6,7 @@ from dataclasses import dataclass, field
 from ReID.FeaturesClassifier import FeaturesClassifier
 from engine.ImageData import ImageData
 import numpy as np
-from helpers.algebra import CosineSimilarity, EucledeanDistance, Normalize, NormalizedVectorToInt, Pooling1dToSize, SimilarityMethod
+from helpers.algebra import CosineSimilarity, EucledeanDistance, MaxPooling1dToSize, Normalize, NormalizedVectorToInt, Pooling1dToSize, SimilarityMethod
 
 
 @dataclass
@@ -100,7 +100,8 @@ class Identity:
     @property
     def features_binrepr(self) -> int:
         ''' Return int(binary) representation of features vector.'''
-        vector = Pooling1dToSize(self.features, size=64)
+        features = self.images[0].features
+        vector = MaxPooling1dToSize(features, size=64)
         vector_norm = Normalize(vector)
         return NormalizedVectorToInt(vector_norm)
 

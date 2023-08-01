@@ -157,7 +157,7 @@ class MainWindowGui(Ui_MainWindow):
         self.ui.modelResults.setText(f'**ALL : consistency: {self.annoter.consistency_avg*100:2.2f}%,\n' +
                                      f'separation: {self.annoter.separation_avg*100:2.2f}%.**\n\n'
                                      f'**Identity** consistency: {identity.consistency*100:2.2f}%,\n' +
-                                     f'separation: {self.annoter.SeprationAvg(identity)*100:2.2f}%.'
+                                     f'separation: {self.annoter.SeparationAvg(identity)*100:2.2f}%.'
                                      )
 
         # View : Identity
@@ -226,6 +226,15 @@ class MainWindowGui(Ui_MainWindow):
             self.identityNumber = int(item.toolTip())
             # Idenitity image number : Reset to None
             self.identityImageNumber = None
+
+            # Identity : Get
+            identity = self.annoter.identities[self.identityNumber]
+            # Identity similarites to all identities : Get
+            similarities = self.annoter.Similarities(identity)
+            # Table : Update again
+            ViewImagesTable.Update(self.ui.fileSelectorTableWidget,
+                                   self.annoter.identities,
+                                   similarities)
 
         # Selection : Identity compared selection
         elif (self.ui.selectionIdentityCompared.isChecked()):

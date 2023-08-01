@@ -24,7 +24,7 @@ class ViewImagesTable:
         table.clear()
         labels = _translate('ViewImagesTable',
                             'Identity;Images;Hue;Saturation;Brightness;ImHash;' +
-                            'Consistency;FeaturesBinRep').split(';')
+                            'Consistency;SimilarityToBase;FeaturesBinRep').split(';')
         table.setColumnCount(len(labels))
         table.setHorizontalHeaderLabels(labels)
         table.setRowCount(len(identities))
@@ -40,3 +40,31 @@ class ViewImagesTable:
         table.setSortingEnabled(True)
         table.resizeColumnsToContents()
         table.resizeRowsToContents()
+
+    @staticmethod
+    def Update(table: QTableWidget,
+               identities: list,
+               similarities: dict,
+               ):
+        ''' View images in table.'''
+        # Check : Invalid files list
+        if (identities is None) or (len(identities) == 0):
+            return
+
+        # Get translations
+        _translate = QtCore.QCoreApplication.translate
+
+        # For each all rows in table
+        for rowIndex in range(table.rowCount()):
+            # Get identity number
+            identity_number = int(table.item(rowIndex, 0).text())
+            # Get identity
+            identity = identities[identity_number]
+            # Get similarity from dict
+            similarity = similarities[identity_number]
+
+            # Update row
+            ViewImagesTableRow.View(table,
+                                    rowIndex,
+                                    identity,
+                                    similarity)
