@@ -102,38 +102,15 @@ class MainWindowGui(Ui_MainWindow):
         # Default Identity selection radio button enabled
         self.ui.selectionIdentity.setChecked(True)
 
-        # # Buttons player
-        # self.ui.nextFileButton.clicked.connect(self.CallbackNextFile)
-        # self.ui.prevFileButton.clicked.connect(self.CallbackPrevFile)
         # Buttons Image
         self.ui.mergeIdentitiesButton.clicked.connect(
             self.CallbackMergeIdentitiesButton)
-        # self.ui.SaveFileAnnotationsButton.clicked.connect(
-        #     self.CallbackSaveFileAnnotationsButton)
-        # self.ui.DeleteImageAnnotationsButton.clicked.connect(
-        #     self.CallbackDeleteImageAnnotationsButton)
-        # # Buttons - Annotations
-        # self.ui.addAnnotationsButton.clicked.connect(
-        #     self.CallbackAddAnnotationsButton)
-        # self.ui.renameAnnotationsButton.clicked.connect(
-        #     self.CallbackRenameAnnotationsButton)
-        # self.ui.removeAnnotationsButton.clicked.connect(
-        #     self.CallbackRemoveAnnotationsButton)
-        # self.ui.detectAnnotationsButton.clicked.connect(
-        #     self.CallbackDetectAnnotations)
-        # self.ui.hideLabelsButton.clicked.connect(
-        #     self.CallbackHideLabelsButton)
-        # self.ui.hideAnnotationsButton.clicked.connect(
-        #     self.CallbackHideAnnotationsButton)
-        # self.ui.ClearAnnotationsButton.clicked.connect(
-        #     self.CallbackClearAnnotationsButton)
-        # # Buttons - Painting
-        # self.ui.paintCircleButton.clicked.connect(
-        #     self.CallbackPaintCircleButton)
 
         # Gallery Callbacks :
         self.ui.identityGallery.itemClicked.connect(
             self.CallbackGalleryItemClicked)
+        self.ui.identityGallery.itemSelectedDelete.connect(
+            self.CallbackGalleryItemDeleted)
 
     def Setup(self):
         ''' Setup again UI.'''
@@ -223,6 +200,16 @@ class MainWindowGui(Ui_MainWindow):
 
         # Setup UI again
         self.Setup()
+
+    def CallbackGalleryItemDeleted(self, item: QListWidgetItem):
+        ''' Callback when gallery item was clicked.'''
+        # Identity number : Get
+        deletedImageNumber = int(item.toolTip())
+
+        # Identity : Get
+        identity = self.annoter.identities[self.identityNumber]
+        # Identity : Delete image
+        identity.DeleteImage(deletedImageNumber)
 
     def CallbackImageScalingTextChanged(self, text):
         ''' Callback when image scaling text changed.'''

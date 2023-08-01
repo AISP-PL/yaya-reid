@@ -5,6 +5,7 @@
 from __future__ import annotations
 from dataclasses import dataclass, field
 from functools import cached_property
+import os
 import shutil
 from ReID.FeaturesClassifier import FeaturesClassifier
 from engine.ReidFileInfo import ReidDataset, ReidFileInfo
@@ -143,6 +144,22 @@ class Identity:
 
         # Add image
         self.images.append(image)
+        sorted(self.images, key=lambda image: image.frame)
+
+    def DeleteImage(self, imageNumber: int):
+        ''' Add image to identity.'''
+        # Check : Image number < images count
+        if (imageNumber >= len(self.images)):
+            return None
+
+        # Image : Get
+        image = self.images[imageNumber]
+
+        # Images : Remove
+        os.remove(image.path)
+        del self.images[imageNumber]
+
+        # Images : Sort
         sorted(self.images, key=lambda image: image.frame)
 
     def FeaturesUpdate(self, features_classifier: FeaturesClassifier):
