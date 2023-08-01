@@ -6,6 +6,7 @@ from PyQt5.QtWidgets import QTableWidget, QTableWidgetItem, QAbstractItemView
 from PyQt5 import QtCore
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QIcon
+from Gui.widgets.FloatScaleTableWidgetItem import FloatScaleTableWidgetItem
 from Gui.widgets.IdentityTableWidgetItem import IdentityTableWidgetItem
 from Gui.widgets.IntTableWidgetItem import IntTableWidgetItem
 from Gui.widgets.FloatTableWidgetItem import FloatTableWidgetItem
@@ -69,13 +70,13 @@ class ViewImagesTableRow:
         colIndex += 1
 
         # Image consistency
-        item = FloatTableWidgetItem(identity.consistency)
+        item = FloatScaleTableWidgetItem(identity.consistency, maxVal=1)
         item.setToolTip(str(identity.number))
         table.setItem(rowIndex, colIndex, item)
         colIndex += 1
 
         # Identity similarity to selected identity (given as parameter)
-        item = FloatTableWidgetItem(similarity)
+        item = FloatScaleTableWidgetItem(similarity, maxVal=1)
         item.setToolTip(str(identity.number))
         table.setItem(rowIndex, colIndex, item)
         colIndex += 1
