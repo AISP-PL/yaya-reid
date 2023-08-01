@@ -3,6 +3,7 @@
 
 '''
 from dataclasses import dataclass, field
+from functools import cached_property
 from ReID.FeaturesClassifier import FeaturesClassifier
 from engine.ImageData import ImageData
 import numpy as np
@@ -39,7 +40,7 @@ class Identity:
         ''' Count of images.'''
         return len(self.images)
 
-    @property
+    @cached_property
     def hue(self) -> float:
         ''' Return average hue of all images.'''
         # Check : Images list is not empty
@@ -50,7 +51,7 @@ class Identity:
         hue = [image.visuals.hue for image in self.images]
         return np.mean(hue)
 
-    @property
+    @cached_property
     def brightness(self) -> float:
         ''' Return average brightness of all images.'''
         # Check : Images list is not empty
@@ -61,7 +62,7 @@ class Identity:
         brightness = [image.visuals.brightness for image in self.images]
         return np.mean(brightness)
 
-    @property
+    @cached_property
     def saturation(self) -> float:
         ''' Return average saturation of all images.'''
         # Check : Images list is not empty
@@ -72,7 +73,7 @@ class Identity:
         saturation = [image.visuals.saturation for image in self.images]
         return np.mean(saturation)
 
-    @property
+    @cached_property
     def imhash(self) -> float:
         ''' Return average imhash of all images.'''
         # Check : Images list is not empty
@@ -83,7 +84,7 @@ class Identity:
         imhash = [image.visuals.dhash for image in self.images]
         return np.mean(imhash)
 
-    @property
+    @cached_property
     def features(self) -> np.array:
         ''' Return average features of all np.arrays.'''
         # Check : Images list is not empty
@@ -93,11 +94,11 @@ class Identity:
         # Get features
         features = [image.features for image in self.images]
         # Get average
-        average = np.mean(features, axis=0)
+        average = np.median(features, axis=0)
 
         return average
 
-    @property
+    @cached_property
     def features_binrepr(self) -> int:
         ''' Return int(binary) representation of features vector.'''
         features = self.images[0].features
@@ -105,7 +106,7 @@ class Identity:
         vector_norm = Normalize(vector)
         return NormalizedVectorToInt(vector_norm)
 
-    @property
+    @cached_property
     def consistency(self) -> float:
         ''' Return min images features cosine distance.
             Named an identity consistency.'''
